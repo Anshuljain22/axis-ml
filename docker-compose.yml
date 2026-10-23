@@ -1,0 +1,51 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: pitwall
+      POSTGRES_USER: pitwall
+      POSTGRES_PASSWORD: pitwall_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infrastructure/postgres/01-create-mlflow-db.sql:/docker-entrypoint-initdb.d/01-create-mlflow-db.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pitwall -d pitwall"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  mlflow:
+    build:
+      context: ./infrastructure/mlflow
+    environment:
+      MLFLOW_BACKEND_STORE_URI: postgresql+psycopg://pitwall:pitwall_dev@postgres:5432/mlflow
+      MLFLOW_DEFAULT_ARTIFACT_ROOT: /mlartifacts
+    command: ["mlflow", "server", "--host", "0.0.0.0", "--port", "5000", "--backend-store-uri", "postgresql+psycopg://pitwall:pitwall_dev@postgres:5432/mlflow", "--serve-artifacts", "--artifacts-destination", "/mlartifacts", "--allowed-hosts", "*"]
+    ports:
+      - "5000:5000"
+    volumes:
+      - mlflow_artifacts:/mlartifacts
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  api:
+    build:
+      context: ./services/api
+    env_file:
+      - .env
+    ports:
+      - "8002:8000"
+    volumes:
+      - ./artifacts:/data/artifacts
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mlflow:
+        condition: service_started
+
+volumes:
+  postgres_data:
+  mlflow_artifacts:

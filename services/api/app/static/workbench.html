@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pitwall OS — Engineering Workbench</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-base: #0a0d14;
+      --bg-surface: #121824;
+      --bg-card: rgba(22, 30, 46, 0.7);
+      --bg-card-hover: rgba(28, 38, 58, 0.85);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-focus: #00e5ff;
+      --accent-cyan: #00e5ff;
+      --accent-orange: #ff5722;
+      --accent-emerald: #00e676;
+      --accent-purple: #b388ff;
+      --accent-rose: #ff1744;
+      --text-main: #f0f4fc;
+      --text-muted: #8c9ba5;
+      --text-dim: #5c6b73;
+      --radius-sm: 6px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-sans: 'Outfit', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --shadow-glow: 0 0 20px rgba(0, 229, 255, 0.15);
+      --shadow-card: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(0, 229, 255, 0.04) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(255, 87, 34, 0.04) 0%, transparent 40%),
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+    }
+
+    /* Top Navigation */
+    header {
+      background: rgba(18, 24, 36, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-subtle);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 0.75rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-logo {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--accent-orange), var(--accent-cyan));
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: #000;
+      box-shadow: 0 0 12px rgba(255, 87, 34, 0.4);
+    }
+
+    .brand-title {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .brand-badge {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 999px;
+      background: rgba(0, 229, 255, 0.1);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(0, 229, 255, 0.3);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 0.5rem;
+      background: rgba(10, 13, 20, 0.6);
+      padding: 0.3rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 0.45rem 1rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .tab-btn.active {
+      background: var(--bg-surface);
+      color: var(--accent-cyan);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--accent-emerald);
+      background: rgba(0, 230, 118, 0.08);
+      padding: 0.35rem 0.75rem;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 230, 118, 0.2);
+    }
+
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--accent-emerald);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--accent-emerald);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.3); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+
+    /* Main Container */
+    main {
+      flex: 1;
+      max-width: 1500px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Glass Panels */
+    .panel {
+      display: none;
+      animation: fadeIn 0.3s ease-out forwards;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-card);
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .card:hover {
+      border-color: rgba(0, 229, 255, 0.3);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Form Inputs */
+    .form-group {
+      margin-bottom: 1.1rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    input[type="text"], input[type="number"], select {
+      width: 100%;
+      background: rgba(10, 13, 20, 0.7);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 0.65rem 0.85rem;
+      color: var(--text-main);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
+    }
+
+    .btn {
+      background: linear-gradient(135deg, var(--accent-cyan), #0091ea);
+      color: #000;
+      font-weight: 600;
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      padding: 0.65rem 1.25rem;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn:hover {
+      filter: brightness(1.15);
+      box-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+      box-shadow: none;
+    }
+
+    .btn-orange {
+      background: linear-gradient(135deg, var(--accent-orange), #d84315);
+      color: #fff;
+    }
+
+    .btn-orange:hover {
+      box-shadow: 0 0 15px rgba(255, 87, 34, 0.4);
+    }
+
+    /* Dataset Selector Bar */
+    .dataset-selector-bar {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 0.85rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .selector-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    /* Tables */
+    .table-container {
+      overflow-x: auto;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      background: rgba(10, 13, 20, 0.5);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      text-align: left;
+    }
+
+    th {
+      background: rgba(18, 24, 36, 0.9);
+      padding: 0.75rem 1rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      border-bottom: 1px solid var(--border-subtle);
+      font-family: var(--font-display);
+    }
+
+    td {
+      padding: 0.7rem 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Badges & Tags */
+    .badge {
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      text-transform: uppercase;
+      display: inline-block;
+    }
+
+    .badge-cyan { background: rgba(0, 229, 255, 0.12); color: var(--accent-cyan); border: 1px solid rgba(0, 229, 255, 0.3); }
+    .badge-orange { background: rgba(255, 87, 34, 0.12); color: var(--accent-orange); border: 1px solid rgba(255, 87, 34, 0.3); }
+    .badge-emerald { background: rgba(0, 230, 118, 0.12); color: var(--accent-emerald); border: 1px solid rgba(0, 230, 118, 0.3); }
+    .badge-purple { background: rgba(179, 136, 255, 0.12); color: var(--accent-purple); border: 1px solid rgba(179, 136, 255, 0.3); }
+
+    /* Drag & Drop Upload Zone */
+    .drop-zone {
+      border: 2px dashed rgba(0, 229, 255, 0.3);
+      border-radius: var(--radius-lg);
+      padding: 3rem 2rem;
+      text-align: center;
+      background: rgba(0, 229, 255, 0.02);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .drop-zone:hover, .drop-zone.dragover {
+      border-color: var(--accent-cyan);
+      background: rgba(0, 229, 255, 0.06);
+      box-shadow: 0 0 25px rgba(0, 229, 255, 0.15);
+    }
+
+    .drop-icon {
+      font-size: 2.5rem;
+      margin-bottom: 0.75rem;
+      color: var(--accent-cyan);
+    }
+
+    /* Toast Notification */
+    #toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 0.9rem 1.25rem;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      z-index: 1000;
+      transform: translateY(120%);
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      font-size: 0.85rem;
+    }
+
+    #toast.show {
+      transform: translateY(0);
+    }
+
+    /* JSON code block */
+    pre.code-block {
+      background: rgba(10, 13, 20, 0.85);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: #9cdcfe;
+      overflow-x: auto;
+      max-height: 280px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header>
+    <div class="brand">
+      <div class="brand-logo">P</div>
+      <div class="brand-title">PITWALL OS</div>
+      <div class="brand-badge">CORE WORKBENCH</div>
+    </div>
+
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('tab-datasets')">Datasets</button>
+      <button class="tab-btn" onclick="switchTab('tab-datalab')">Data Lab</button>
+      <button class="tab-btn" onclick="switchTab('tab-eda')">EDA Studio</button>
+      <button class="tab-btn" onclick="switchTab('tab-cleaning')">Cleaning</button>
+      <button class="tab-btn" onclick="switchTab('tab-training')">Training Studio</button>
+      <button class="tab-btn" onclick="switchTab('tab-experiments')">Experiments</button>
+      <button class="tab-btn" onclick="switchTab('tab-prediction')">Inference</button>
+    </div>
+
+    <div class="status-pill">
+      <div class="pulse-dot"></div>
+      <span id="service-status">CORE ACTIVE (PORT 8000)</span>
+    </div>
+  </header>
+
+  <!-- Main View Area -->
+  <main>
+
+    <!-- Global Dataset Active Selector Bar -->
+    <div class="dataset-selector-bar">
+      <div class="selector-left">
+        <label style="margin: 0;">Active Dataset:</label>
+        <select id="global-dataset-select" style="width: 320px;" onchange="onDatasetSelected(this.value)">
+          <option value="">Loading datasets...</option>
+        </select>
+        <span id="global-dataset-meta" class="badge badge-cyan">- rows | - cols</span>
+      </div>
+      <div>
+        <button class="btn btn-secondary" onclick="loadDatasets()">Refresh</button>
+      </div>
+    </div>
+
+    <!-- 1. DATASETS PANEL -->
+    <section id="tab-datasets" class="panel active">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Upload New Dataset</div>
+            <span class="badge badge-orange">CSV SUPPORTED</span>
+          </div>
+          <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+            <div class="drop-icon">📁</div>
+            <div style="font-weight: 600; margin-bottom: 0.3rem;">Drag & drop CSV file or click to browse</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Max file size: 50MB. Duplicates & schemas verified automatically.</div>
+            <input type="file" id="file-input" accept=".csv" style="display: none;" onchange="uploadFile(this.files[0])">
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Registered Datasets Library</div>
+            <span class="badge badge-emerald" id="datasets-count">0 Loaded</span>
+          </div>
+          <div class="table-container" style="max-height: 380px;">
+            <table id="datasets-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Shape</th>
+                  <th>Quality</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="datasets-tbody">
+                <tr><td colspan="4" style="text-align: center; color: var(--text-dim);">No datasets yet.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. DATA LAB & SCHEMA PANEL -->
+    <section id="tab-datalab" class="panel">
+      <div class="grid-2" style="margin-bottom: 1.5rem;">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Durable Schema Definition</div>
+            <span class="badge badge-purple" id="schema-version-badge">Version 1</span>
+          </div>
+          <div class="table-container" style="max-height: 280px;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Column</th>
+                  <th>Logical Type</th>
+                  <th>Physical Dtype</th>
+                  <th>Nullable</th>
+                  <th>Target Candidate</th>
+                </tr>
+              </thead>
+              <tbody id="schema-tbody">
+                <tr><td colspan="5">Select a dataset to view schema.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Data Quality & Health Audit</div>
+            <span class="badge badge-emerald" id="quality-status-badge">100% Passed</span>
+          </div>
+          <div id="quality-checks-list" style="display: flex; flex-direction: column; gap: 0.6rem;">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Dataset Inspection Preview</div>
+          <span class="badge badge-cyan">First 10 Rows</span>
+        </div>
+        <div class="table-container" id="inspect-table-container">
+          <table id="inspect-table">
+            <thead id="inspect-thead"></thead>
+            <tbody id="inspect-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. EDA STUDIO PANEL -->
+    <section id="tab-eda" class="panel">
+      <div class="grid-3" style="margin-bottom: 1.5rem;">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Numeric Diagnostics</div>
+            <span class="badge badge-cyan">Integrity Check</span>
+          </div>
+          <div id="diagnostics-summary" style="font-size: 0.85rem; color: var(--text-muted);">
+            Select a dataset to calculate diagnostics.
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Multicollinearity & Warnings</div>
+            <span class="badge badge-orange">Correlation Alert</span>
+          </div>
+          <div id="eda-warnings-list" style="font-size: 0.8rem; max-height: 140px; overflow-y: auto;">
+            No high multicollinearity detected.
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Time Series Cadence</div>
+            <span class="badge badge-purple">Temporal Sampling</span>
+          </div>
+          <div id="timeseries-summary" style="font-size: 0.85rem; color: var(--text-muted);">
+            No time series column identified.
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Descriptive Statistics & Feature Distributions</div>
+          <span class="badge badge-emerald">Summary Metrics</span>
+        </div>
+        <div class="table-container">
+          <table id="eda-stats-table">
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th>Count</th>
+                <th>Mean</th>
+                <th>Std Dev</th>
+                <th>Min</th>
+                <th>25%</th>
+                <th>Median</th>
+                <th>75%</th>
+                <th>Max</th>
+                <th>Missing</th>
+              </tr>
+            </thead>
+            <tbody id="eda-stats-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. CLEANING WIZARD PANEL -->
+    <section id="tab-cleaning" class="panel">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Configure Cleaning Pipeline</div>
+            <span class="badge badge-cyan">Non-Destructive</span>
+          </div>
+          <div class="form-group">
+            <label>Operation Type</label>
+            <select id="clean-op-type">
+              <option value="drop_duplicates">Drop Duplicate Rows</option>
+              <option value="impute_missing">Impute Missing Values</option>
+              <option value="convert_type">Convert Column Type</option>
+              <option value="drop_columns">Drop Unused Column</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Target Column (if applicable)</label>
+            <select id="clean-target-col"></select>
+          </div>
+          <div class="form-group">
+            <label>Strategy / Target Type</label>
+            <select id="clean-strategy">
+              <option value="median">Impute Strategy: Median</option>
+              <option value="mean">Impute Strategy: Mean</option>
+              <option value="mode">Impute Strategy: Mode / Most Frequent</option>
+              <option value="datetime">Convert Type: Datetime</option>
+              <option value="numeric">Convert Type: Numeric (Float)</option>
+              <option value="integer">Convert Type: Integer</option>
+            </select>
+          </div>
+          <div style="display: flex; gap: 0.75rem;">
+            <button class="btn btn-secondary" onclick="previewCleaningOp()">Preview Cleaning</button>
+            <button class="btn btn-orange" onclick="applyCleaningOp()">Apply & Create Version</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Cleaning Impact Preview & Lineage</div>
+            <span class="badge badge-emerald" id="cleaning-changes-badge">Ready</span>
+          </div>
+          <div id="cleaning-preview-results" style="font-size: 0.85rem; color: var(--text-muted);">
+            Configure an operation and click Preview to verify row/column changes without altering original data.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. TRAINING STUDIO PANEL -->
+    <section id="tab-training" class="panel">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Training Studio Configuration</div>
+            <span class="badge badge-cyan">Leakage-Free Pipeline</span>
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Target Column</label>
+              <select id="train-target-column"></select>
+            </div>
+            <div class="form-group">
+              <label>Task Type</label>
+              <select id="train-task-type">
+                <option value="auto">Auto-Detect</option>
+                <option value="regression">Regression</option>
+                <option value="classification">Classification</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Model Architecture (Phase 6)</label>
+              <select id="train-model-name">
+                <option value="auto">Auto Baseline</option>
+                <option value="ridge">Ridge Regression / Logistic Reg</option>
+                <option value="random_forest">Random Forest</option>
+                <option value="gradient_boosting">Gradient Boosting</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Split Strategy (Phase 6)</label>
+              <select id="train-split-strategy">
+                <option value="random">Random Stratified Split</option>
+                <option value="chronological">Chronological (Time-Series Leak-Free)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid-3">
+            <div class="form-group">
+              <label>Numeric Scaler</label>
+              <select id="train-scaler">
+                <option value="standard">StandardScaler</option>
+                <option value="minmax">MinMaxScaler</option>
+                <option value="robust">RobustScaler</option>
+                <option value="none">None (Unscaled)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Imputer</label>
+              <select id="train-imputer">
+                <option value="median">Median</option>
+                <option value="mean">Mean</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Datetime Handling</label>
+              <select id="train-datetime">
+                <option value="extract">Extract Components</option>
+                <option value="ignore">Ignore / Drop</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Cross-Validation Folds</label>
+              <select id="train-cv-folds">
+                <option value="0">None (Holdout Test Split)</option>
+                <option value="3">3-Fold Cross-Validation</option>
+                <option value="5">5-Fold Cross-Validation</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Test Size Ratio</label>
+              <input type="number" id="train-test-size" value="0.2" min="0.1" max="0.5" step="0.05">
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 0.75rem; margin-top: 1rem;">
+            <button class="btn btn-secondary" onclick="previewPipelineTransform()">Preview Feature Matrix</button>
+            <button class="btn" onclick="executeModelTraining()">Train Baseline Model</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Feature Matrix & Transformation Preview</div>
+            <span class="badge badge-purple" id="pipeline-preview-badge">ColumnTransformer</span>
+          </div>
+          <div id="pipeline-preview-container">
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+              Click 'Preview Feature Matrix' to inspect transformed one-hot dimensions, extracted timestamp features, and scaled numerical bounds.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. EXPERIMENT TRACKER & COMPARISON PANEL -->
+    <section id="tab-experiments" class="panel">
+      <div class="card" style="margin-bottom: 1.5rem;">
+        <div class="card-header">
+          <div class="card-title">Experiment Run Comparison (Phase 9)</div>
+          <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <span class="badge badge-cyan" id="comparison-metric-badge">Ranked by R²</span>
+            <button class="btn btn-secondary" onclick="compareRuns()">Re-Rank Models</button>
+          </div>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Model</th>
+                <th>Task</th>
+                <th>Target</th>
+                <th>Primary Metric</th>
+                <th>Detailed Metrics</th>
+                <th>Timestamp</th>
+              </tr>
+            </thead>
+            <tbody id="comparison-tbody">
+              <tr><td colspan="7">Loading model leaderboard...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">All Historical Experiment Runs</div>
+          <span class="badge badge-emerald" id="runs-total-badge">0 Runs</span>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Run ID</th>
+                <th>Model Architecture</th>
+                <th>Task Type</th>
+                <th>Metrics</th>
+                <th>MLflow Link</th>
+                <th>Artifact</th>
+              </tr>
+            </thead>
+            <tbody id="all-runs-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. INFERENCE & PREDICTION PANEL -->
+    <section id="tab-prediction" class="panel">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Single Sample Inference (Phase 8)</div>
+            <span class="badge badge-cyan">Unscaled Raw Input</span>
+          </div>
+          <div class="form-group">
+            <label>Select Trained Run / Model</label>
+            <select id="predict-run-select" onchange="buildPredictionForm(this.value)">
+              <option value="">Select a completed model run...</option>
+            </select>
+          </div>
+          <div id="dynamic-prediction-inputs">
+            <!-- Dynamically populated fields for expected features -->
+          </div>
+          <button class="btn" style="margin-top: 1rem;" onclick="runSinglePrediction()">Predict Target</button>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Inference Output & Class Probabilities</div>
+            <span class="badge badge-emerald" id="pred-status-badge">Awaiting Input</span>
+          </div>
+          <div id="prediction-result-box" style="padding: 1.5rem; background: rgba(10, 13, 20, 0.6); border-radius: var(--radius-md); border: 1px solid var(--border-subtle); text-align: center;">
+            <div style="font-size: 0.9rem; color: var(--text-muted);">Submit feature inputs to query the persisted scikit-learn pipeline.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Toast Notification Container -->
+  <div id="toast">
+    <span id="toast-icon">ℹ️</span>
+    <span id="toast-message">Message text</span>
+  </div>
+
+  <script>
+    let currentDatasets = [];
+    let currentRuns = [];
+    let activeDatasetId = null;
+
+    // Tab Navigation
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(panel => panel.classList.remove('active'));
+      
+      const targetBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.getAttribute('onclick').includes(tabId));
+      if (targetBtn) targetBtn.classList.add('active');
+      
+      const targetPanel = document.getElementById(tabId);
+      if (targetPanel) targetPanel.classList.add('active');
+
+      if (tabId === 'tab-datalab') loadDataLab();
+      if (tabId === 'tab-eda') loadEDA();
+      if (tabId === 'tab-experiments') { loadAllRuns(); compareRuns(); }
+      if (tabId === 'tab-prediction') populatePredictRunSelect();
+    }
+
+    // Show Toast
+    function showToast(message, isError = false) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-icon').textContent = isError ? '⚠️' : '✅';
+      document.getElementById('toast-message').textContent = message;
+      toast.style.borderColor = isError ? 'var(--accent-rose)' : 'var(--accent-emerald)';
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3500);
+    }
+
+    // Load Datasets
+    async function loadDatasets() {
+      try {
+        const res = await fetch('/api/v1/datasets');
+        currentDatasets = await res.json();
+        
+        document.getElementById('datasets-count').textContent = `${currentDatasets.length} Loaded`;
+        const select = document.getElementById('global-dataset-select');
+        select.innerHTML = '';
+        
+        const tbody = document.getElementById('datasets-tbody');
+        tbody.innerHTML = '';
+
+        if (currentDatasets.length === 0) {
+          select.innerHTML = '<option value="">No datasets uploaded</option>';
+          tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No datasets found.</td></tr>';
+          return;
+        }
+
+        currentDatasets.forEach((ds, idx) => {
+          const opt = document.createElement('option');
+          opt.value = ds.id;
+          opt.textContent = `${ds.name} (${ds.rows}r x ${ds.columns}c)`;
+          select.appendChild(opt);
+
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><strong>${ds.name}</strong><br><small style="color: var(--text-dim);">${ds.filename}</small></td>
+            <td>${ds.rows} rows, ${ds.columns} cols</td>
+            <td><span class="badge badge-emerald">${ds.quality.passed}/${ds.quality.total} checks</span></td>
+            <td><button class="btn btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;" onclick="selectAndGoToDataLab('${ds.id}')">Explore</button></td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        if (!activeDatasetId && currentDatasets.length > 0) {
+          onDatasetSelected(currentDatasets[0].id);
+        } else if (activeDatasetId) {
+          select.value = activeDatasetId;
+        }
+      } catch (err) {
+        showToast('Failed to load datasets: ' + err.message, true);
+      }
+    }
+
+    function onDatasetSelected(datasetId) {
+      activeDatasetId = datasetId;
+      const ds = currentDatasets.find(d => d.id === datasetId);
+      if (ds) {
+        document.getElementById('global-dataset-meta').textContent = `${ds.rows} rows | ${ds.columns} cols`;
+      }
+      populateColumnDropdowns(ds);
+    }
+
+    function selectAndGoToDataLab(datasetId) {
+      document.getElementById('global-dataset-select').value = datasetId;
+      onDatasetSelected(datasetId);
+      switchTab('tab-datalab');
+    }
+
+    function populateColumnDropdowns(ds) {
+      if (!ds || !ds.profile || !ds.profile.columns) return;
+      const cols = ds.profile.columns.map(c => c.name);
+
+      const trainTarget = document.getElementById('train-target-column');
+      trainTarget.innerHTML = '';
+      cols.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        trainTarget.appendChild(opt);
+      });
+
+      const cleanCol = document.getElementById('clean-target-col');
+      cleanCol.innerHTML = '';
+      cols.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        cleanCol.appendChild(opt);
+      });
+    }
+
+    // Upload Dataset
+    async function uploadFile(file) {
+      if (!file) return;
+      const formData = new FormData();
+      formData.append('file', file);
+      showToast('Uploading and parsing CSV...');
+
+      try {
+        const res = await fetch('/api/v1/datasets', {
+          method: 'POST',
+          body: formData,
+        });
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.detail || 'Upload failed');
+        }
+        const created = await res.json();
+        showToast(`Dataset '${created.name}' uploaded successfully!`);
+        await loadDatasets();
+        selectAndGoToDataLab(created.id);
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    }
+
+    // Drag and drop handlers
+    const dropZone = document.getElementById('drop-zone');
+    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      if (e.dataTransfer.files.length > 0) uploadFile(e.dataTransfer.files[0]);
+    });
+
+    // 2. Load Data Lab
+    async function loadDataLab() {
+      if (!activeDatasetId) return;
+      try {
+        const schemaRes = await fetch(`/api/v1/datasets/${activeDatasetId}/schema`);
+        const schema = await schemaRes.json();
+        
+        const schemaTbody = document.getElementById('schema-tbody');
+        schemaTbody.innerHTML = '';
+        (schema.columns || []).forEach(col => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><strong>${col.name}</strong></td>
+            <td><span class="badge badge-cyan">${col.logical_type}</span></td>
+            <td>${col.physical_type}</td>
+            <td>${col.nullable ? 'Yes' : 'No'}</td>
+            <td>${col.is_target_candidate ? '✅ Candidate' : '-'}</td>
+          `;
+          schemaTbody.appendChild(tr);
+        });
+
+        // Inspection Preview
+        const inspectRes = await fetch(`/api/v1/datasets/${activeDatasetId}/inspect`);
+        const inspectData = await inspectRes.json();
+        const insp = inspectData.inspection;
+
+        const thead = document.getElementById('inspect-thead');
+        const tbody = document.getElementById('inspect-tbody');
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        if (insp.sample_rows && insp.sample_rows.length > 0) {
+          const cols = Object.keys(insp.sample_rows[0]);
+          const headerTr = document.createElement('tr');
+          cols.forEach(c => {
+            const th = document.createElement('th');
+            th.textContent = c;
+            headerTr.appendChild(th);
+          });
+          thead.appendChild(headerTr);
+
+          insp.sample_rows.forEach(row => {
+            const tr = document.createElement('tr');
+            cols.forEach(c => {
+              const td = document.createElement('td');
+              td.textContent = row[c] !== null && row[c] !== undefined ? row[c] : 'NaN';
+              tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+          });
+        }
+      } catch (err) {
+        showToast('Data Lab load failed: ' + err.message, true);
+      }
+    }
+
+    // 3. Load EDA Studio
+    async function loadEDA() {
+      if (!activeDatasetId) return;
+      try {
+        const diagRes = await fetch(`/api/v1/datasets/${activeDatasetId}/eda/diagnostics`);
+        const diag = await diagRes.json();
+        document.getElementById('diagnostics-summary').innerHTML = `
+          <div>Evaluated <strong>${diag.numeric_columns.length}</strong> numeric features.</div>
+          <div style="margin-top: 0.3rem;">Constant columns: ${diag.constant_columns.length}</div>
+          <div style="margin-top: 0.3rem;">Pairs checked: ${diag.pairs_evaluated}</div>
+        `;
+
+        const summaryRes = await fetch(`/api/v1/datasets/${activeDatasetId}/eda/summary`);
+        const summary = await summaryRes.json();
+        const warnDiv = document.getElementById('eda-warnings-list');
+        warnDiv.innerHTML = '';
+        if (summary.warnings && summary.warnings.length > 0) {
+          summary.warnings.forEach(w => {
+            const item = document.createElement('div');
+            item.style.marginBottom = '0.4rem';
+            item.innerHTML = `<span class="badge badge-orange">${w.type}</span> ${w.message}`;
+            warnDiv.appendChild(item);
+          });
+        } else {
+          warnDiv.innerHTML = '<span style="color: var(--accent-emerald);">No data quality warnings flagged.</span>';
+        }
+
+        // Descriptive Stats Table
+        const statsRes = await fetch(`/api/v1/datasets/${activeDatasetId}/eda/statistics`);
+        const stats = await statsRes.json();
+        const statsTbody = document.getElementById('eda-stats-tbody');
+        statsTbody.innerHTML = '';
+        (stats.statistics || []).forEach(s => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><strong>${s.column}</strong></td>
+            <td>${s.count}</td>
+            <td>${s.mean !== null ? s.mean.toFixed(2) : '-'}</td>
+            <td>${s.std !== null ? s.std.toFixed(2) : '-'}</td>
+            <td>${s.min !== null ? s.min.toFixed(2) : '-'}</td>
+            <td>${s["25%"] !== null ? s["25%"].toFixed(2) : '-'}</td>
+            <td>${s["50%"] !== null ? s["50%"].toFixed(2) : '-'}</td>
+            <td>${s["75%"] !== null ? s["75%"].toFixed(2) : '-'}</td>
+            <td>${s.max !== null ? s.max.toFixed(2) : '-'}</td>
+            <td>${s.missing_count} (${s.missing_percent.toFixed(1)}%)</td>
+          `;
+          statsTbody.appendChild(tr);
+        });
+      } catch (err) {
+        showToast('EDA load failed: ' + err.message, true);
+      }
+    }
+
+    // 4. Cleaning operations
+    async function previewCleaningOp() {
+      if (!activeDatasetId) return;
+      const opType = document.getElementById('clean-op-type').value;
+      const targetCol = document.getElementById('clean-target-col').value;
+      const strategy = document.getElementById('clean-strategy').value;
+
+      const op = { operation: opType };
+      if (opType === 'convert_type') { op.column = targetCol; op.dtype = strategy; }
+      else if (opType === 'impute_missing') { op.column = targetCol; op.strategy = strategy; }
+      else if (opType === 'drop_columns') { op.column = targetCol; }
+
+      try {
+        const res = await fetch(`/api/v1/datasets/${activeDatasetId}/cleaning/preview`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ operations: [op] }),
+        });
+        const data = await res.json();
+        document.getElementById('cleaning-preview-results').innerHTML = `
+          <div style="color: var(--accent-emerald); font-weight: 600; margin-bottom: 0.5rem;">Preview Verified (File Unchanged):</div>
+          <div>Rows: ${data.rows_before} ➔ ${data.rows_after}</div>
+          <div>Columns: ${data.columns_before} ➔ ${data.columns_after}</div>
+          <div style="margin-top: 0.5rem; color: var(--accent-cyan);">${data.changes[0]?.description || 'No changes'}</div>
+        `;
+      } catch (err) {
+        showToast('Preview error: ' + err.message, true);
+      }
+    }
+
+    async function applyCleaningOp() {
+      if (!activeDatasetId) return;
+      const opType = document.getElementById('clean-op-type').value;
+      const targetCol = document.getElementById('clean-target-col').value;
+      const strategy = document.getElementById('clean-strategy').value;
+
+      const op = { operation: opType };
+      if (opType === 'convert_type') { op.column = targetCol; op.dtype = strategy; }
+      else if (opType === 'impute_missing') { op.column = targetCol; op.strategy = strategy; }
+      else if (opType === 'drop_columns') { op.column = targetCol; }
+
+      try {
+        const res = await fetch(`/api/v1/datasets/${activeDatasetId}/cleaning/apply`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ operations: [op] }),
+        });
+        if (!res.ok) throw new Error((await res.json()).detail);
+        const newDs = await res.json();
+        showToast(`Cleaning applied! Created new version: ${newDs.name}`);
+        await loadDatasets();
+        selectAndGoToDataLab(newDs.id);
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    }
+
+    // 5. Training Studio & Pipeline Preview
+    async function previewPipelineTransform() {
+      if (!activeDatasetId) return;
+      const targetCol = document.getElementById('train-target-column').value;
+      const scaler = document.getElementById('train-scaler').value;
+      const imputer = document.getElementById('train-imputer').value;
+      const dtHandling = document.getElementById('train-datetime').value;
+
+      try {
+        const res = await fetch(`/api/v1/datasets/${activeDatasetId}/pipeline/preview`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            target_column: targetCol,
+            numeric_scaler: scaler,
+            numeric_imputer: imputer,
+            datetime_handling: dtHandling,
+            sample_rows: 3
+          }),
+        });
+        const data = await res.json();
+        document.getElementById('pipeline-preview-container').innerHTML = `
+          <div style="margin-bottom: 0.5rem;">
+            <strong>Features:</strong> ${data.original_features_count} original ➔ <span style="color: var(--accent-cyan); font-weight: 700;">${data.transformed_features_count} Transformed Columns</span>
+          </div>
+          <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+            <strong>Transformed feature names:</strong><br>${data.transformed_feature_names.join(', ')}
+          </div>
+          <label>Sample Transformed Matrix (First 3 Rows):</label>
+          <pre class="code-block">${JSON.stringify(data.sample_preview, null, 2)}</pre>
+        `;
+      } catch (err) {
+        showToast('Pipeline preview error: ' + err.message, true);
+      }
+    }
+
+    async function executeModelTraining() {
+      if (!activeDatasetId) return;
+      const targetCol = document.getElementById('train-target-column').value;
+      const taskType = document.getElementById('train-task-type').value;
+      const modelName = document.getElementById('train-model-name').value;
+      const splitStrategy = document.getElementById('train-split-strategy').value;
+      const scaler = document.getElementById('train-scaler').value;
+      const imputer = document.getElementById('train-imputer').value;
+      const dtHandling = document.getElementById('train-datetime').value;
+      const cvFolds = parseInt(document.getElementById('train-cv-folds').value, 10);
+      const testSize = parseFloat(document.getElementById('train-test-size').value);
+
+      showToast('Training model pipeline in background...');
+      try {
+        const res = await fetch(`/api/v1/datasets/${activeDatasetId}/runs`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            target_column: targetCol,
+            task_type: taskType,
+            model_name: modelName,
+            split_strategy: splitStrategy,
+            cv_folds: cvFolds,
+            test_size: testSize,
+            numeric_scaler: scaler,
+            numeric_imputer: imputer,
+            datetime_handling: dtHandling,
+            random_state: 42
+          }),
+        });
+        if (!res.ok) throw new Error((await res.json()).detail);
+        const run = await res.json();
+        showToast(`Model '${run.model_name}' trained successfully!`);
+        switchTab('tab-experiments');
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    }
+
+    // 6. Experiments & Comparison
+    async function compareRuns() {
+      if (!activeDatasetId) return;
+      try {
+        const res = await fetch(`/api/v1/datasets/${activeDatasetId}/runs/compare`);
+        const comp = await res.json();
+        document.getElementById('comparison-metric-badge').textContent = `Ranked by ${comp.ranking_metric.toUpperCase()}`;
+
+        const tbody = document.getElementById('comparison-tbody');
+        tbody.innerHTML = '';
+        if (!comp.ranked_runs || comp.ranked_runs.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="7">No completed runs for this dataset yet.</td></tr>';
+          return;
+        }
+
+        comp.ranked_runs.forEach(r => {
+          const isBest = r.run_id === comp.best_run_id;
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${isBest ? '👑 #1' : '#' + r.rank}</td>
+            <td><strong>${r.model_name}</strong></td>
+            <td><span class="badge badge-cyan">${r.task_type}</span></td>
+            <td>${r.target_column}</td>
+            <td><strong style="color: var(--accent-emerald);">${r.primary_score !== null ? r.primary_score.toFixed(4) : '-'}</strong></td>
+            <td><pre style="margin: 0; font-size: 0.75rem;">${JSON.stringify(r.metrics, null, 1)}</pre></td>
+            <td><small>${new Date(r.created_at).toLocaleTimeString()}</small></td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        showToast('Comparison failed: ' + err.message, true);
+      }
+    }
+
+    async function loadAllRuns() {
+      try {
+        const res = await fetch('/api/v1/runs');
+        currentRuns = await res.json();
+        document.getElementById('runs-total-badge').textContent = `${currentRuns.length} Runs`;
+
+        const tbody = document.getElementById('all-runs-tbody');
+        tbody.innerHTML = '';
+        currentRuns.forEach(r => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><small>${r.id.substring(0, 8)}...</small></td>
+            <td><strong>${r.model_name}</strong></td>
+            <td><span class="badge badge-purple">${r.task_type}</span></td>
+            <td><small>${JSON.stringify(r.metrics)}</small></td>
+            <td>${r.mlflow_run_id ? `<span class="badge badge-emerald">MLflow: ${r.mlflow_run_id.substring(0, 8)}</span>` : '<span style="color: var(--text-dim);">-</span>'}</td>
+            <td><small style="color: var(--text-dim);">${r.artifact_path ? 'Saved' : 'None'}</small></td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        showToast('Failed to load runs: ' + err.message, true);
+      }
+    }
+
+    // 7. Prediction & Inference
+    function populatePredictRunSelect() {
+      const select = document.getElementById('predict-run-select');
+      select.innerHTML = '<option value="">Select a completed model run...</option>';
+      currentRuns.forEach(r => {
+        const opt = document.createElement('option');
+        opt.value = r.id;
+        opt.textContent = `${r.model_name} (${r.target_column}) [${r.id.substring(0, 8)}]`;
+        select.appendChild(opt);
+      });
+    }
+
+    function buildPredictionForm(runId) {
+      if (!runId) return;
+      const run = currentRuns.find(r => r.id === runId);
+      if (!run) return;
+
+      const container = document.getElementById('dynamic-prediction-inputs');
+      container.innerHTML = '';
+
+      const features = (run.parameters && run.parameters.preprocessing) ? 
+        [
+          ...(run.parameters.preprocessing.numeric_columns || []),
+          ...(run.parameters.preprocessing.categorical_columns || []),
+          ...(run.parameters.preprocessing.datetime_columns || []),
+        ] : [];
+
+      if (features.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-dim);">No input feature schema found.</p>';
+        return;
+      }
+
+      features.forEach(f => {
+        const grp = document.createElement('div');
+        grp.className = 'form-group';
+        grp.innerHTML = `
+          <label>${f}</label>
+          <input type="text" id="pred-feat-${f}" placeholder="Enter raw unscaled value...">
+        `;
+        container.appendChild(grp);
+      });
+    }
+
+    async function runSinglePrediction() {
+      const runId = document.getElementById('predict-run-select').value;
+      if (!runId) { showToast('Please select a model run.', true); return; }
+      const run = currentRuns.find(r => r.id === runId);
+      if (!run) return;
+
+      const features = {};
+      const inputs = document.querySelectorAll('[id^="pred-feat-"]');
+      inputs.forEach(inp => {
+        const col = inp.id.replace('pred-feat-', '');
+        let val = inp.value.trim();
+        if (!isNaN(val) && val !== '') val = Number(val);
+        features[col] = val;
+      });
+
+      try {
+        const res = await fetch(`/api/v1/runs/${runId}/predict`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(features),
+        });
+        if (!res.ok) throw new Error((await res.json()).detail);
+        const data = await res.json();
+        
+        let probHtml = '';
+        if (data.probabilities) {
+          probHtml = '<div style="margin-top: 1rem; text-align: left;"><strong>Class Probabilities:</strong><br>';
+          for (const [cls, prob] of Object.entries(data.probabilities)) {
+            probHtml += `
+              <div style="margin-top: 0.3rem;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem;">
+                  <span>Class '${cls}'</span><span>${(prob * 100).toFixed(1)}%</span>
+                </div>
+                <div style="height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; margin-top: 2px;">
+                  <div style="width: ${prob * 100}%; height: 100%; background: var(--accent-cyan);"></div>
+                </div>
+              </div>
+            `;
+          }
+          probHtml += '</div>';
+        }
+
+        document.getElementById('prediction-result-box').innerHTML = `
+          <div style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase;">Predicted ${data.target_column}</div>
+          <div style="font-size: 2.2rem; font-weight: 800; font-family: var(--font-display); color: var(--accent-cyan); margin: 0.5rem 0;">
+            ${typeof data.prediction === 'number' ? data.prediction.toFixed(4) : data.prediction}
+          </div>
+          <span class="badge badge-emerald">Model: ${data.model_name}</span>
+          ${probHtml}
+        `;
+        showToast('Prediction generated successfully!');
+      } catch (err) {
+        showToast('Prediction failed: ' + err.message, true);
+      }
+    }
+
+    // Init
+    window.addEventListener('DOMContentLoaded', () => {
+      loadDatasets();
+    });
+  </script>
+</body>
+</html>

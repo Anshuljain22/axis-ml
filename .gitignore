@@ -1,0 +1,35 @@
+# Environments & Secrets
+.env
+.env.local
+.venv/
+venv/
+ENV/
+
+# Python & Testing
+__pycache__/
+.pytest_cache/
+*.py[cod]
+*$py.class
+*.db
+*.sqlite3
+
+# Node & Frontend
+node_modules/
+services/web/node_modules/
+services/web/dist/
+dist/
+.eslintcache
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Application Artifacts & Uploads (preserves directory structure)
+artifacts/datasets/*.csv
+artifacts/runs/*/
+artifacts/mlruns/
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
