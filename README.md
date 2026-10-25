@@ -1,94 +1,102 @@
-# Pitwall OS — Core MVP
+# AXIS ML — Core Data Science & AI Engineering Workbench
 
-Pitwall OS is an AI-assisted data and ML engineering workbench. This repository starts with a real vertical slice: CSV ingestion, dataset profiling and quality checks, baseline model training, artifact persistence, and MLflow experiment tracking. The garage UI is intentionally out of scope for this milestone.
+AXIS ML (formerly Pitwall OS Core) is an enterprise AI-assisted data science and machine learning engineering workbench. Built with a minimalist **Obsidian & Pure Titanium** design system, it provides end-to-end data lifecycle capabilities: tabular CSV ingestion, schema inference, exploratory data analysis with statistical hypothesis testing, interactive data cleaning, feature engineering, supervised model training across 18+ algorithms, unsupervised anomaly & clustering labs, MLflow experiment tracking, and real-time inference serving.
 
-## Current capabilities
+---
 
-- **Interactive Engineering Workbench UI**: Full single-page dark-mode application served at `/workbench` with dataset management, Data Lab inspection, EDA studio, cleaning wizard, model training studio, experiment comparison leaderboard, and live single/batch inference tester.
-- **FastAPI REST API with interactive OpenAPI docs** (`/docs`) and service metadata (`/`).
-- **CSV Ingestion & Validation**: File-size, format, parsing, 500-column limit, duplicate column checks, and dataset registration with automatic schema inference.
-- **Dataset Schema Persistence & Dtype Restoration**: Infers and persists logical types (`datetime`, `numeric`, `integer`, `categorical`, `boolean`, `text`) and sidecar `.schema.json` specifications to preserve rich types across CSV reloads.
-- **Exploratory Data Analysis (EDA) Suite**: Numeric diagnostics, high-missingness checks, multicollinearity alerts ($|r| \ge 0.98$), standardized warnings, descriptive statistics, histogram distributions, Pearson correlation matrices, and temporal sampling analysis.
-- **Reusable, Leakage-Free Preprocessing Pipeline**: `DateTimeFeatureExtractor` extracts cyclical components (`hour`, `day`, `month`, `dayofweek`, `year`) without high-cardinality one-hot explosion; configurable `ColumnTransformer` with `standard`, `minmax`, `robust`, or unscaled scalers; median or mean imputation; and pipeline preview endpoint (`/pipeline/preview`).
-- **Expanded Model Training Architectures**: Support for Ridge Regression, Logistic Regression, Random Forest, and Gradient Boosting with automated hyperparameter defaults and full `Pipeline` serialization into `model.joblib`.
-- **Chronological & Cross-Validation Strategies**: Leak-free time-series chronological splitting and k-fold / stratified / time-series cross-validation (`cv_folds`).
-- **Comprehensive Evaluation Metrics**: MAE, RMSE, R², explained variance, MAPE for regression; accuracy, weighted/macro precision, weighted/macro recall, weighted/macro F1, ROC-AUC, and confusion matrix for classification.
-- **Deep MLflow Tracking**: Automatic logging of parameters, scalar metrics, tags (`dataset_id`, `model_name`, `task_type`, `split_strategy`), model artifacts, and confusion matrix artifacts into MLflow.
-- **Single & High-Throughput Batch Prediction**: `/runs/{id}/predict` and `/runs/{id}/predict-batch` with automatic probability distributions for classification and raw unscaled input handling.
-- **Model Comparison & Workflow Lifecycle**: `/datasets/{id}/runs/compare` ranks and identifies the best run; `/datasets/{id}/workflow` provides status and recommended next engineering actions.
-- **Automated Pytest Suite**: 38 isolated tests passing in under 6 seconds covering all services, schemas, and endpoints.
+## Key Capabilities
 
-## Requirements
+- **Minimalist Obsidian & Pure Titanium Interface**:
+  - Deep obsidian base (`#090a0f`), subtle micro-borders, and crisp titanium typography (`#f8fafc`).
+  - Interactive **Front Authorization Page** with credentials, 1-click guest access, and an interactive Model Zoo featuring live loss convergence curves, confusion matrices, and real-time inference simulations.
+- **Enterprise Dataset Registry & Ingestion**:
+  - Ingestion validation, automatic logical type inference (`datetime`, `numeric`, `integer`, `categorical`, `boolean`, `text`), and `.schema.json` sidecar specifications.
+  - Pre-seeded with authentic industrial telemetry (`industrial_iot_sensors.csv`) and enterprise subscription analytics (`saas_customer_churn.csv`).
+- **Exploratory Data Analysis (EDA) & Statistical Lab**:
+  - **Normality Testing**: Shapiro-Wilk & D'Agostino-Pearson omnibus tests, skewness, kurtosis, and automated normality verdicts.
+  - **Multicollinearity Diagnostics**: Variance Inflation Factor (VIF), $R^2$, and severity ratings per feature.
+  - **Time-Series Stationarity**: Augmented Dickey-Fuller (ADF) and KPSS tests with critical value thresholds.
+  - **Extended Correlations**: Pearson, Spearman rank, and Kendall's tau correlation matrices.
+  - **Hypothesis Testing**: Two-sample independent T-test, Welch's T-test, Mann-Whitney U, One-Way ANOVA, Kruskal-Wallis H, Chi-square test of independence, and Levene's variance homogeneity test.
+- **Automated Feature Selection Assistant**:
+  - Mutual Information rankings, ANOVA/Regression F-statistics, and Recursive Feature Elimination (RFE) with 1-click feature selection into Model Studio.
+- **Non-Destructive Cleaning Engine**:
+  - Forward fill (`ffill`), backward fill (`bfill`), KNN imputation (`knn_impute`), Z-score outlier capping (`cap_outliers_zscore`), and column renaming (`rename_column`) alongside IQR capping, constant/mean/median filling, and deduplication.
+- **Leakage-Free Preprocessing Pipelines**:
+  - `DateTimeFeatureExtractor` extracts cyclical components; configurable `ColumnTransformer` with `standard`, `minmax`, `robust`, `quantile`, and `power` (Yeo-Johnson) scalers; `median`, `mean`, `knn`, and `constant` imputation; and `/pipeline/preview` endpoints.
+- **Supervised Model Zoo & Training Workbench**:
+  - Support for Ridge, Linear Regression, Lasso, ElasticNet, Bayesian Ridge, Logistic Regression, Decision Tree, Random Forest, Extra Trees, Gradient Boosting, HistGradientBoosting, AdaBoost, SVM/SVC/SVR, KNN, Gaussian Naive Bayes, Multi-Layer Perceptron (MLP Neural Net), Voting, and Stacking ensembles with full `Pipeline` serialization into `model.joblib`.
+  - Permutation feature importance computed on holdout test partitions and logged to MLflow artifacts.
+- **Unsupervised Learning & Anomaly Lab**:
+  - **Clustering**: K-Means, MiniBatch K-Means, Agglomerative Hierarchical, Gaussian Mixture Models (GMM), and DBSCAN with Silhouette, Davies-Bouldin, and Calinski-Harabasz metrics.
+  - **PCA Dimensionality Reduction**: Orthogonal principal component projections, explained variance ratios, cumulative variance scree curves, and feature loading weights.
+  - **Anomaly & Outlier Detection**: Isolation Forest, Local Outlier Factor (LOF), and Elliptic Envelope with configurable contamination rates.
+- **Inference Cockpit & Evaluation Leaderboard**:
+  - Single-record real-time prediction and high-throughput batch scoring (`/runs/{id}/predict` and `/runs/{id}/predict-batch`).
+  - Model comparison and ranking via `/datasets/{id}/runs/compare`.
+- **Deep MLflow Tracking**:
+  - Automatic logging of hyperparameters, scalar metrics, tags (`dataset_id`, `model_name`, `task_type`), model artifacts, and confusion matrices into MLflow.
+- **Automated Pytest Suite**: 51 comprehensive tests covering all services, schemas, statistical tests, feature selection, unsupervised algorithms, model zoo, and endpoints.
 
-- Docker Desktop with Compose enabled
-- Windows PowerShell / Linux terminal
+---
 
-## Run with Docker Desktop (Windows PowerShell)
+## Quickstart
 
+### Prerequisites
+- Python 3.10+
+- Node.js 18+ and npm
+- Docker Desktop (optional, for PostgreSQL + MLflow containers)
+
+### 1. Backend Service (FastAPI)
 ```powershell
-Copy-Item .env.example .env
-docker compose up --build
+cd services/api
+.\.venv\Scripts\Activate.ps1
+pip install -e .
+python -m uvicorn app.main:app --host 0.0.0.0 --port 8002
 ```
+Interactive OpenAPI documentation is available at `http://localhost:8002/docs`.
 
-Wait for PostgreSQL, MLflow, and the API to start. Then open:
-
-- **Dedicated React + Vite Frontend**: http://localhost:3001 (or http://localhost:3000)
-- **Built-in Fast Workbench UI**: http://localhost:8002/workbench
-- **Interactive API docs (Swagger)**: http://localhost:8002/docs
-- **Service Root**: http://localhost:8002/
-- **Health**: http://localhost:8002/api/v1/health
-- **MLflow UI**: http://localhost:5000
-
-### Running the Dedicated React Frontend
-
-The React + Vite application is located in `services/web`:
-
+### 2. Frontend Application (React + Vite)
 ```powershell
 cd services/web
 npm install
 npm run dev
 ```
+Open **`http://localhost:3000`** in your browser.
 
-Stop the backend stack with `Ctrl+C`, or run `docker compose down`. Persistent database and MLflow artifact volumes remain. `docker compose down -v` deletes the persistent volumes, so use it only when you intend to reset them.
-
-## API surface
-
-### Core & Datasets
-- `GET /` — Service metadata and workbench link
-- `GET /workbench` — Interactive Workbench Web UI
-- `GET /api/v1/health` — Service health check
-- `POST /api/v1/datasets` — Upload and profile new CSV dataset
-- `GET /api/v1/datasets` — List all registered datasets
-- `GET /api/v1/datasets/{dataset_id}` — Get dataset details
-- `GET /api/v1/datasets/{dataset_id}/schema` — Retrieve persisted/inferred dataset schema
-- `GET /api/v1/datasets/{dataset_id}/inspect` — Inspect rows and quality metrics
-- `GET /api/v1/datasets/{dataset_id}/workflow` — Retrieve dataset workflow lifecycle status
-
-### EDA & Diagnostics
-- `GET /api/v1/datasets/{dataset_id}/eda/summary` — Unified EDA summary with standardized warnings
-- `GET /api/v1/datasets/{dataset_id}/eda/diagnostics` — Numeric diagnostics and collinearity checks
-- `GET /api/v1/datasets/{dataset_id}/eda/statistics` — Feature summary statistics
-- `GET /api/v1/datasets/{dataset_id}/eda/distributions` — Histograms and quartile distributions
-- `GET /api/v1/datasets/{dataset_id}/eda/correlations` — Pairwise Pearson correlation matrix
-- `GET /api/v1/datasets/{dataset_id}/eda/time-series` — Temporal cadence and sampling analysis
-
-### Cleaning & Transformations
-- `POST /api/v1/datasets/{dataset_id}/cleaning/preview` — Non-destructive cleaning impact preview
-- `POST /api/v1/datasets/{dataset_id}/cleaning/apply` — Apply cleaning operations and create versioned dataset with lineage
-- `POST /api/v1/datasets/{dataset_id}/pipeline/preview` — Preview transformed feature matrix and datetime extraction
-
-### Model Training, Experiments & Inference
-- `POST /api/v1/datasets/{dataset_id}/runs` — Train model pipeline (Ridge, LogReg, Random Forest, Gradient Boosting)
-- `GET /api/v1/runs` — List all experiment runs
-- `GET /api/v1/runs/{run_id}` — Get run details, metrics, and parameters
-- `GET /api/v1/datasets/{dataset_id}/runs/compare` — Compare and rank model runs
-- `POST /api/v1/runs/{run_id}/predict` — Inference on raw unscaled inputs with probabilities
-- `POST /api/v1/runs/{run_id}/predict-batch` — Batch inference for up to 1,000 samples
-
-## Run tests locally (Docker)
-
+### 3. Running Automated Tests
 ```powershell
-docker compose exec api pytest -v
+cd services/api
+.\.venv\Scripts\python.exe -m pytest -v
+```
+To run the production frontend build check:
+```powershell
+cd services/web
+npm run build
 ```
 
-All 38 automated tests execute against an isolated SQLite test database with zero impact on production PostgreSQL data.
+---
+
+## Project Structure
+
+```
+pitwall-os-core/
+├── services/
+│   ├── api/                      # FastAPI Backend
+│   │   ├── app/
+│   │   │   ├── api/routes.py     # 29 REST endpoints
+│   │   │   ├── core/             # Configuration & Database
+│   │   │   ├── models/           # SQLAlchemy Entities (Dataset, ExperimentRun)
+│   │   │   ├── schemas/          # Pydantic Schemas
+│   │   │   └── services/         # EDA, Cleaning, Training, Feature Selection, Unsupervised
+│   │   ├── tests/                # 51 Isolated Pytest Suites
+│   │   └── pyproject.toml        # Dependencies & Packaging
+│   └── web/                      # React 19 + Vite 8 SPA
+│       ├── src/
+│       │   ├── api/client.js     # Axios API Client
+│       │   ├── components/       # Studio Tabs (Login, Home, Datasets, DataLab, EDA, Models, Unsupervised, Leaderboard, Inference)
+│       │   ├── App.jsx           # Root Auth State & Studio Routing
+│       │   └── index.css         # Obsidian & Pure Titanium Design System
+│       └── index.html            # Entry HTML & Modern Typography (Inter, Outfit, JetBrains Mono)
+└── README.md
+```

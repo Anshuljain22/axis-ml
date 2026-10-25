@@ -15,9 +15,16 @@ import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.compose import ColumnTransformer
-from sklearn.impute import SimpleImputer
+from sklearn.impute import KNNImputer, SimpleImputer
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import MinMaxScaler, OneHotEncoder, RobustScaler, StandardScaler
+from sklearn.preprocessing import (
+    MinMaxScaler,
+    OneHotEncoder,
+    PowerTransformer,
+    QuantileTransformer,
+    RobustScaler,
+    StandardScaler,
+)
 
 
 class DateTimeFeatureExtractor(BaseEstimator, TransformerMixin):
@@ -118,10 +125,16 @@ def build_preprocessor(
 
     # 2. Numeric preprocessing
     if numeric_columns:
-        num_strategy = "mean" if numeric_imputer == "mean" else "median"
-        num_steps: list[tuple[str, Any]] = [
-            ("imputer", SimpleImputer(strategy=num_strategy)),
-        ]
+        if numeric_imputer == "knn":
+            imputer_step = ("imputer", KNNImputer(n_neighbors=5))
+        elif numeric_imputer == "constant":
+            imputer_step = ("imputer", SimpleImputer(strategy="constant", fill_value=0.0))
+        elif numeric_imputer == "mean":
+            imputer_step = ("imputer", SimpleImputer(strategy="mean"))
+        else:
+            imputer_step = ("imputer", SimpleImputer(strategy="median"))
+
+        num_steps: list[tuple[str, Any]] = [imputer_step]
 
         if numeric_scaler == "standard":
             num_steps.append(("scale", StandardScaler()))
@@ -129,6 +142,10 @@ def build_preprocessor(
             num_steps.append(("scale", MinMaxScaler()))
         elif numeric_scaler == "robust":
             num_steps.append(("scale", RobustScaler()))
+        elif numeric_scaler == "quantile":
+            num_steps.append(("scale", QuantileTransformer(output_distribution="normal", random_state=42)))
+        elif numeric_scaler == "power":
+            num_steps.append(("scale", PowerTransformer(method="yeo-johnson")))
         # "none" -> unscaled
 
         transformers.append(("numeric", Pipeline(num_steps), numeric_columns))

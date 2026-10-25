@@ -207,6 +207,68 @@ def preview_cleaning(
                 f"to [{lower}, {upper}]."
             )
 
+        elif action == "ffill":
+            col = require_column(column)
+            missing_before = int(df[col].isna().sum())
+            df[col] = df[col].ffill()
+            changed_cells = missing_before - int(df[col].isna().sum())
+            description = f"Forward-filled {changed_cells} missing values in '{col}'."
+
+        elif action == "bfill":
+            col = require_column(column)
+            missing_before = int(df[col].isna().sum())
+            df[col] = df[col].bfill()
+            changed_cells = missing_before - int(df[col].isna().sum())
+            description = f"Backward-filled {changed_cells} missing values in '{col}'."
+
+        elif action == "knn_impute":
+            col = require_column(column)
+            if not pd.api.types.is_numeric_dtype(df[col]):
+                raise CleaningError(f"KNN imputation requires a numeric column: '{col}'.")
+            from sklearn.impute import KNNImputer
+            n_neighbors = int(operation.get("n_neighbors", 5))
+            missing_before = int(df[col].isna().sum())
+            if missing_before > 0:
+                num_cols = list(df.select_dtypes(include="number").columns)
+                imputer = KNNImputer(n_neighbors=min(n_neighbors, max(1, len(df.dropna(subset=[col])))))
+                imputed_arr = imputer.fit_transform(df[num_cols])
+                col_idx = num_cols.index(col)
+                df[col] = imputed_arr[:, col_idx]
+            changed_cells = missing_before - int(df[col].isna().sum())
+            description = f"KNN-imputed {changed_cells} missing values in '{col}' (k={n_neighbors})."
+
+        elif action == "cap_outliers_zscore":
+            col = require_column(column)
+            if not pd.api.types.is_numeric_dtype(df[col]):
+                raise CleaningError(f"Z-score outlier capping requires a numeric column: '{col}'.")
+            z_threshold = float(operation.get("z_threshold", 3.0))
+            if z_threshold <= 0:
+                raise CleaningError("Z-score threshold must be greater than zero.")
+            mean = df[col].mean()
+            std = df[col].std()
+            if pd.isna(mean) or pd.isna(std) or std == 0:
+                changed_cells = 0
+                description = f"Skipped Z-score capping for '{col}': standard deviation is zero or undefined."
+            else:
+                lower = float(mean - z_threshold * std)
+                upper = float(mean + z_threshold * std)
+                mask = df[col].notna() & ((df[col] < lower) | (df[col] > upper))
+                changed_cells = int(mask.sum())
+                df[col] = df[col].clip(lower=lower, upper=upper)
+                description = f"Capped {changed_cells} outliers in '{col}' to Z-score bounds [{round(lower, 4)}, {round(upper, 4)}] (z={z_threshold})."
+
+        elif action == "rename_column":
+            col = require_column(column)
+            new_name = operation.get("new_name")
+            if not new_name or not str(new_name).strip():
+                raise CleaningError("rename_column requires a non-empty 'new_name'.")
+            new_name = str(new_name).strip()
+            if new_name in df.columns and new_name != col:
+                raise CleaningError(f"A column named '{new_name}' already exists.")
+            df = df.rename(columns={col: new_name})
+            changed_cells = before_rows
+            description = f"Renamed column '{col}' to '{new_name}'."
+
         else:
             raise CleaningError(
                 f"Operation {index + 1}: unsupported operation '{action}'."

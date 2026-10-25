@@ -13,20 +13,45 @@ except ImportError:  # MLflow is optional for lightweight local unit tests.
 
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import (
+    AdaBoostClassifier,
+    AdaBoostRegressor,
+    ExtraTreesClassifier,
+    ExtraTreesRegressor,
     GradientBoostingClassifier,
     GradientBoostingRegressor,
+    HistGradientBoostingClassifier,
+    HistGradientBoostingRegressor,
     RandomForestClassifier,
     RandomForestRegressor,
+    StackingClassifier,
+    StackingRegressor,
+    VotingClassifier,
+    VotingRegressor,
 )
-from sklearn.linear_model import LogisticRegression, Ridge
+from sklearn.inspection import permutation_importance
+from sklearn.linear_model import (
+    BayesianRidge,
+    ElasticNet,
+    Lasso,
+    LinearRegression,
+    LogisticRegression,
+    Ridge,
+)
 from sklearn.metrics import (
     accuracy_score,
+    balanced_accuracy_score,
+    brier_score_loss,
+    cohen_kappa_score,
     confusion_matrix,
     explained_variance_score,
     f1_score,
+    log_loss,
+    matthews_corrcoef,
+    max_error,
     mean_absolute_error,
     mean_absolute_percentage_error,
     mean_squared_error,
+    median_absolute_error,
     precision_score,
     r2_score,
     recall_score,
@@ -39,7 +64,12 @@ from sklearn.model_selection import (
     cross_val_score,
     train_test_split,
 )
+from sklearn.naive_bayes import GaussianNB
+from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
+from sklearn.neural_network import MLPClassifier, MLPRegressor
 from sklearn.pipeline import Pipeline
+from sklearn.svm import SVC, SVR
+from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 
 
 class TrainingError(ValueError):
@@ -120,32 +150,121 @@ def train_baseline(
     # Model instantiation
     req_model = (model_name or "auto").lower().strip()
     if chosen == "classification":
-        if req_model in ("auto", "logistic_regression", "ridge"):
+        if req_model in ("auto", "logistic_regression", "logistic", "ridge"):
             model = LogisticRegression(max_iter=1000, class_weight="balanced", random_state=random_state)
             actual_model_name = "LogisticRegression"
+        elif req_model == "decision_tree":
+            model = DecisionTreeClassifier(random_state=random_state, class_weight="balanced")
+            actual_model_name = "DecisionTreeClassifier"
         elif req_model == "random_forest":
             model = RandomForestClassifier(n_estimators=100, random_state=random_state, class_weight="balanced")
             actual_model_name = "RandomForestClassifier"
+        elif req_model == "extra_trees":
+            model = ExtraTreesClassifier(n_estimators=100, random_state=random_state, class_weight="balanced")
+            actual_model_name = "ExtraTreesClassifier"
         elif req_model == "gradient_boosting":
             model = GradientBoostingClassifier(n_estimators=100, random_state=random_state)
             actual_model_name = "GradientBoostingClassifier"
+        elif req_model == "hist_gradient_boosting":
+            model = HistGradientBoostingClassifier(random_state=random_state, class_weight="balanced")
+            actual_model_name = "HistGradientBoostingClassifier"
+        elif req_model == "adaboost":
+            model = AdaBoostClassifier(random_state=random_state)
+            actual_model_name = "AdaBoostClassifier"
+        elif req_model in ("svm", "svc"):
+            model = SVC(probability=True, class_weight="balanced", random_state=random_state)
+            actual_model_name = "SupportVectorClassifier"
+        elif req_model == "knn":
+            n_neighbors = min(5, max(1, len(X) - 1))
+            model = KNeighborsClassifier(n_neighbors=n_neighbors)
+            actual_model_name = "KNeighborsClassifier"
+        elif req_model == "naive_bayes":
+            model = GaussianNB()
+            actual_model_name = "GaussianNaiveBayes"
+        elif req_model == "mlp":
+            model = MLPClassifier(hidden_layer_sizes=(64, 32), max_iter=500, early_stopping=False, random_state=random_state)
+            actual_model_name = "MultiLayerPerceptronClassifier"
+        elif req_model == "voting":
+            estimators = [
+                ("lr", LogisticRegression(max_iter=500, random_state=random_state)),
+                ("rf", RandomForestClassifier(n_estimators=50, random_state=random_state)),
+                ("gnb", GaussianNB()),
+            ]
+            model = VotingClassifier(estimators=estimators, voting="soft")
+            actual_model_name = "VotingClassifier"
+        elif req_model == "stacking":
+            estimators = [
+                ("lr", LogisticRegression(max_iter=500, random_state=random_state)),
+                ("rf", RandomForestClassifier(n_estimators=50, random_state=random_state)),
+            ]
+            model = StackingClassifier(estimators=estimators, final_estimator=LogisticRegression(random_state=random_state))
+            actual_model_name = "StackingClassifier"
         else:
             raise TrainingError(
-                f"Unsupported classification model '{model_name}'. Allowed: auto, logistic_regression, random_forest, gradient_boosting"
+                f"Unsupported classification model '{model_name}'. Allowed: auto, logistic_regression, decision_tree, random_forest, extra_trees, gradient_boosting, hist_gradient_boosting, adaboost, svm, knn, naive_bayes, mlp, voting, stacking"
             )
     else:  # regression
         if req_model in ("auto", "ridge"):
             model = Ridge(random_state=random_state)
             actual_model_name = "RidgeRegression"
+        elif req_model in ("linear_regression", "linear"):
+            model = LinearRegression()
+            actual_model_name = "LinearRegression"
+        elif req_model == "lasso":
+            model = Lasso(random_state=random_state)
+            actual_model_name = "LassoRegression"
+        elif req_model == "elastic_net":
+            model = ElasticNet(random_state=random_state)
+            actual_model_name = "ElasticNetRegression"
+        elif req_model == "bayesian_ridge":
+            model = BayesianRidge()
+            actual_model_name = "BayesianRidgeRegression"
+        elif req_model == "decision_tree":
+            model = DecisionTreeRegressor(random_state=random_state)
+            actual_model_name = "DecisionTreeRegressor"
         elif req_model == "random_forest":
             model = RandomForestRegressor(n_estimators=100, random_state=random_state)
             actual_model_name = "RandomForestRegressor"
+        elif req_model == "extra_trees":
+            model = ExtraTreesRegressor(n_estimators=100, random_state=random_state)
+            actual_model_name = "ExtraTreesRegressor"
         elif req_model == "gradient_boosting":
             model = GradientBoostingRegressor(n_estimators=100, random_state=random_state)
             actual_model_name = "GradientBoostingRegressor"
+        elif req_model == "hist_gradient_boosting":
+            model = HistGradientBoostingRegressor(random_state=random_state)
+            actual_model_name = "HistGradientBoostingRegressor"
+        elif req_model == "adaboost":
+            model = AdaBoostRegressor(random_state=random_state)
+            actual_model_name = "AdaBoostRegressor"
+        elif req_model in ("svr", "svm"):
+            model = SVR()
+            actual_model_name = "SupportVectorRegressor"
+        elif req_model == "knn":
+            n_neighbors = min(5, max(1, len(X) - 1))
+            model = KNeighborsRegressor(n_neighbors=n_neighbors)
+            actual_model_name = "KNeighborsRegressor"
+        elif req_model == "mlp":
+            model = MLPRegressor(hidden_layer_sizes=(64, 32), max_iter=500, early_stopping=True, random_state=random_state)
+            actual_model_name = "MultiLayerPerceptronRegressor"
+        elif req_model == "voting":
+            estimators = [
+                ("ridge", Ridge(random_state=random_state)),
+                ("rf", RandomForestRegressor(n_estimators=50, random_state=random_state)),
+                ("gbr", GradientBoostingRegressor(n_estimators=50, random_state=random_state)),
+            ]
+            model = VotingRegressor(estimators=estimators)
+            actual_model_name = "VotingRegressor"
+        elif req_model == "stacking":
+            estimators = [
+                ("ridge", Ridge(random_state=random_state)),
+                ("rf", RandomForestRegressor(n_estimators=50, random_state=random_state)),
+            ]
+            model = StackingRegressor(estimators=estimators, final_estimator=Ridge(random_state=random_state))
+            actual_model_name = "StackingRegressor"
         else:
             raise TrainingError(
-                f"Unsupported regression model '{model_name}'. Allowed: auto, ridge, random_forest, gradient_boosting"
+                f"Unsupported regression model '{model_name}'. Allowed: auto, ridge, linear_regression, lasso, elastic_net, bayesian_ridge, decision_tree, random_forest, extra_trees, gradient_boosting, hist_gradient_boosting, adaboost, svr, knn, mlp, voting, stacking"
             )
 
     # Train / Test splitting strategy
@@ -206,22 +325,31 @@ def train_baseline(
     if chosen == "classification":
         metrics = {
             "accuracy": round(float(accuracy_score(y_test, pred)), 4),
+            "balanced_accuracy": round(float(balanced_accuracy_score(y_test, pred)), 4),
             "precision_weighted": round(float(precision_score(y_test, pred, average="weighted", zero_division=0)), 4),
             "recall_weighted": round(float(recall_score(y_test, pred, average="weighted", zero_division=0)), 4),
             "f1_weighted": round(float(f1_score(y_test, pred, average="weighted", zero_division=0)), 4),
             "f1_macro": round(float(f1_score(y_test, pred, average="macro", zero_division=0)), 4),
+            "mcc": round(float(matthews_corrcoef(y_test, pred)), 4),
+            "cohen_kappa": round(float(cohen_kappa_score(y_test, pred)), 4),
         }
 
-        # Try ROC-AUC
+        # Try ROC-AUC, Brier score, and Log Loss
         if hasattr(pipeline.named_steps["model"], "predict_proba"):
             try:
                 probas = pipeline.predict_proba(X_test)
                 if len(np.unique(y_test)) == 2:
                     metrics["roc_auc"] = round(float(roc_auc_score(y_test, probas[:, 1])), 4)
+                    pos_label = np.unique(y_test)[-1]
+                    metrics["brier_score"] = round(float(brier_score_loss(y_test == pos_label, probas[:, 1])), 4)
                 else:
                     metrics["roc_auc"] = round(
                         float(roc_auc_score(y_test, probas, multi_class="ovr", average="weighted")), 4
                     )
+                try:
+                    metrics["log_loss"] = round(float(log_loss(y_test, probas)), 4)
+                except Exception:
+                    pass
             except Exception:
                 pass
 
@@ -235,11 +363,21 @@ def train_baseline(
         metrics["confusion_matrix"] = confusion_info
     else:
         mse = float(mean_squared_error(y_test, pred))
+        r2_val = float(r2_score(y_test, pred))
+        n_samples = len(y_test)
+        n_features = X.shape[1]
+        adj_r2 = r2_val
+        if n_samples > n_features + 1:
+            adj_r2 = 1.0 - (1.0 - r2_val) * ((n_samples - 1) / (n_samples - n_features - 1))
+
         metrics = {
             "mae": round(float(mean_absolute_error(y_test, pred)), 4),
             "rmse": round(mse ** 0.5, 4),
-            "r2": round(float(r2_score(y_test, pred)), 4),
+            "r2": round(r2_val, 4),
+            "adjusted_r2": round(float(adj_r2), 4),
             "explained_variance": round(float(explained_variance_score(y_test, pred)), 4),
+            "median_ae": round(float(median_absolute_error(y_test, pred)), 4),
+            "max_error": round(float(max_error(y_test, pred)), 4),
         }
         try:
             metrics["mape"] = round(float(mean_absolute_percentage_error(y_test, pred)), 4)
@@ -248,6 +386,33 @@ def train_baseline(
 
     if cv_summary:
         metrics["cross_validation"] = cv_summary
+
+    # Permutation Feature Importance
+    feature_importance_list = []
+    try:
+        perm_scoring = "r2" if chosen == "regression" else "accuracy"
+        perm_res = permutation_importance(
+            pipeline,
+            X_test,
+            y_test,
+            n_repeats=min(5, max(2, len(X_test))),
+            random_state=random_state,
+            scoring=perm_scoring,
+        )
+        for col_idx, col_name in enumerate(X.columns):
+            imp_mean = float(perm_res.importances_mean[col_idx])
+            imp_std = float(perm_res.importances_std[col_idx])
+            feature_importance_list.append({
+                "feature": col_name,
+                "importance": round(imp_mean, 5),
+                "std": round(imp_std, 5),
+            })
+        feature_importance_list.sort(key=lambda x: x["importance"], reverse=True)
+    except Exception:
+        pass
+
+    if feature_importance_list:
+        metrics["feature_importance"] = feature_importance_list
 
     # Save artifacts locally
     run_id = str(uuid4())
@@ -259,6 +424,10 @@ def train_baseline(
     if confusion_info:
         (out_dir / "confusion_matrix.json").write_text(
             json.dumps(confusion_info, indent=2), encoding="utf-8"
+        )
+    if feature_importance_list:
+        (out_dir / "feature_importance.json").write_text(
+            json.dumps(feature_importance_list, indent=2), encoding="utf-8"
         )
 
     try:
@@ -342,6 +511,8 @@ def train_baseline(
             mlflow.log_artifact(str(out_dir / "run.json"))
             if confusion_info:
                 mlflow.log_artifact(str(out_dir / "confusion_matrix.json"))
+            if feature_importance_list:
+                mlflow.log_artifact(str(out_dir / "feature_importance.json"))
 
     except Exception as exc:
         metadata["tracking_warning"] = str(exc)

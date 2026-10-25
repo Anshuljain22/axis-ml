@@ -160,7 +160,7 @@ export default function LeaderboardTab({
               <Trophy size={40} style={{ opacity: 0.3, margin: '0 auto 1rem auto' }} />
               <p>No model runs recorded for this dataset yet.</p>
               <button 
-                className="btn btn-racing" 
+                className="btn btn-primary" 
                 style={{ marginTop: '1rem' }}
                 onClick={() => onNavigateTab('models')}
               >

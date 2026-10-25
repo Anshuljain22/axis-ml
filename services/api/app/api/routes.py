@@ -9,14 +9,37 @@ from app.core.config import get_settings
 from app.core.database import get_db
 from app.models.entities import Dataset, ExperimentRun
 from app.schemas.datasets import (
+    AnomalyDetectionRequest,
     BatchPredictRequest,
     BatchPredictResponse,
+    ClusteringRequest,
     DatasetOut,
+    FeatureSelectionRequest,
+    HypothesisTestRequest,
     ModelComparisonResponse,
+    PcaRequest,
     PipelinePreviewRequest,
     PipelinePreviewResponse,
     RunOut,
     TrainRequest,
+)
+from app.services.feature_selection import (
+    FeatureSelectionError,
+    analyze_feature_importance_and_selection,
+)
+from app.services.unsupervised import (
+    UnsupervisedError,
+    run_anomaly_detection,
+    run_clustering,
+    run_pca,
+)
+from app.services.statistical_tests import (
+    StatisticalTestError,
+    compute_correlations_extended,
+    compute_normality_tests,
+    compute_stationarity_tests,
+    compute_vif,
+    run_hypothesis_test,
 )
 from app.services.data_quality import build_profile, build_quality_report
 from app.services.pipeline import preview_pipeline_transform
@@ -542,15 +565,15 @@ def preview_dataset_pipeline(
     Preview the transformed feature matrix, extracted datetime features,
     and column encodings prior to model training.
     """
-    if request.numeric_scaler not in {"standard", "minmax", "robust", "none"}:
+    if request.numeric_scaler not in {"standard", "minmax", "robust", "quantile", "power", "none"}:
         raise HTTPException(
             status_code=422,
-            detail="numeric_scaler must be one of: standard, minmax, robust, none",
+            detail="numeric_scaler must be one of: standard, minmax, robust, quantile, power, none",
         )
-    if request.numeric_imputer not in {"median", "mean"}:
+    if request.numeric_imputer not in {"median", "mean", "knn", "constant"}:
         raise HTTPException(
             status_code=422,
-            detail="numeric_imputer must be one of: median, mean",
+            detail="numeric_imputer must be one of: median, mean, knn, constant",
         )
     if request.datetime_handling not in {"extract", "ignore"}:
         raise HTTPException(
@@ -590,15 +613,15 @@ def preview_dataset_pipeline(
 def train_dataset(dataset_id: str, request: TrainRequest, db: Session = Depends(get_db)):
     if not 0.1 <= request.test_size <= 0.5:
         raise HTTPException(status_code=422, detail="test_size must be between 0.1 and 0.5")
-    if request.numeric_scaler not in {"standard", "minmax", "robust", "none"}:
+    if request.numeric_scaler not in {"standard", "minmax", "robust", "quantile", "power", "none"}:
         raise HTTPException(
             status_code=422,
-            detail="numeric_scaler must be one of: standard, minmax, robust, none",
+            detail="numeric_scaler must be one of: standard, minmax, robust, quantile, power, none",
         )
-    if request.numeric_imputer not in {"median", "mean"}:
+    if request.numeric_imputer not in {"median", "mean", "knn", "constant"}:
         raise HTTPException(
             status_code=422,
-            detail="numeric_imputer must be one of: median, mean",
+            detail="numeric_imputer must be one of: median, mean, knn, constant",
         )
     if request.datetime_handling not in {"extract", "ignore"}:
         raise HTTPException(
@@ -616,7 +639,31 @@ def train_dataset(dataset_id: str, request: TrainRequest, db: Session = Depends(
             detail="cv_folds must be 0 (no CV) or between 2 and 10",
         )
 
-    allowed_models = {"auto", "ridge", "logistic_regression", "random_forest", "gradient_boosting"}
+    allowed_models = {
+        "auto",
+        "ridge",
+        "linear_regression",
+        "linear",
+        "lasso",
+        "elastic_net",
+        "bayesian_ridge",
+        "logistic_regression",
+        "logistic",
+        "decision_tree",
+        "random_forest",
+        "extra_trees",
+        "gradient_boosting",
+        "hist_gradient_boosting",
+        "adaboost",
+        "svm",
+        "svc",
+        "svr",
+        "knn",
+        "naive_bayes",
+        "mlp",
+        "voting",
+        "stacking",
+    }
     if request.model_name.lower().strip() not in allowed_models:
         raise HTTPException(
             status_code=422,
@@ -988,4 +1035,232 @@ def get_dataset_workflow_status(
         "best_run": best_run,
         "next_recommended_action": next_action,
     }
+
+
+@router.get("/datasets/{dataset_id}/eda/normality")
+def get_dataset_normality(
+    dataset_id: str,
+    column: str | None = None,
+    db: Session = Depends(get_db),
+):
+    """Return normality tests (Shapiro-Wilk, D'Agostino, skew, kurtosis) for numeric columns."""
+    dataset = db.get(Dataset, dataset_id)
+    if dataset is None:
+        raise HTTPException(status_code=404, detail="Dataset not found.")
+
+    try:
+        return {
+            "dataset_id": dataset.id,
+            **compute_normality_tests(dataset.path, column=column),
+        }
+    except StatisticalTestError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+@router.get("/datasets/{dataset_id}/eda/vif")
+def get_dataset_vif(
+    dataset_id: str,
+    db: Session = Depends(get_db),
+):
+    """Return Variance Inflation Factor (VIF) multicollinearity analysis."""
+    dataset = db.get(Dataset, dataset_id)
+    if dataset is None:
+        raise HTTPException(status_code=404, detail="Dataset not found.")
+
+    try:
+        return {
+            "dataset_id": dataset.id,
+            **compute_vif(dataset.path),
+        }
+    except StatisticalTestError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+@router.get("/datasets/{dataset_id}/eda/stationarity")
+def get_dataset_stationarity(
+    dataset_id: str,
+    datetime_column: str | None = None,
+    value_column: str | None = None,
+    db: Session = Depends(get_db),
+):
+    """Return Augmented Dickey-Fuller (ADF) and KPSS time-series stationarity evaluations."""
+    dataset = db.get(Dataset, dataset_id)
+    if dataset is None:
+        raise HTTPException(status_code=404, detail="Dataset not found.")
+
+    try:
+        return {
+            "dataset_id": dataset.id,
+            **compute_stationarity_tests(
+                dataset.path,
+                datetime_column=datetime_column,
+                value_column=value_column,
+            ),
+        }
+    except StatisticalTestError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+@router.post("/datasets/{dataset_id}/eda/hypothesis-test")
+def execute_dataset_hypothesis_test(
+    dataset_id: str,
+    payload: HypothesisTestRequest,
+    db: Session = Depends(get_db),
+):
+    """Run specified statistical hypothesis test between features or across groups."""
+    dataset = db.get(Dataset, dataset_id)
+    if dataset is None:
+        raise HTTPException(status_code=404, detail="Dataset not found.")
+
+    try:
+        return {
+            "dataset_id": dataset.id,
+            **run_hypothesis_test(
+                dataset.path,
+                test_type=payload.test_type,
+                col_a=payload.col_a,
+                col_b=payload.col_b,
+                group_col=payload.group_col,
+                alpha=payload.alpha,
+            ),
+        }
+    except StatisticalTestError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+@router.get("/datasets/{dataset_id}/eda/correlations-extended")
+def get_dataset_correlations_extended(
+    dataset_id: str,
+    db: Session = Depends(get_db),
+):
+    """Return Pearson, Spearman rank, and Kendall's tau correlation matrices."""
+    dataset = db.get(Dataset, dataset_id)
+    if dataset is None:
+        raise HTTPException(status_code=404, detail="Dataset not found.")
+
+    try:
+        return {
+            "dataset_id": dataset.id,
+            **compute_correlations_extended(dataset.path),
+        }
+    except StatisticalTestError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+@router.post("/datasets/{dataset_id}/feature-selection")
+def run_dataset_feature_selection(
+    dataset_id: str,
+    payload: FeatureSelectionRequest,
+    db: Session = Depends(get_db),
+):
+    """Perform automated feature importance evaluation via Mutual Information, F-Scores, and RFE."""
+    dataset = db.get(Dataset, dataset_id)
+    if dataset is None:
+        raise HTTPException(status_code=404, detail="Dataset not found.")
+
+    try:
+        return {
+            "dataset_id": dataset.id,
+            **analyze_feature_importance_and_selection(
+                dataset.path,
+                target_column=payload.target_column,
+                k=payload.k,
+            ),
+        }
+    except FeatureSelectionError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+@router.post("/datasets/{dataset_id}/unsupervised/cluster")
+def cluster_dataset(
+    dataset_id: str,
+    payload: ClusteringRequest,
+    db: Session = Depends(get_db),
+):
+    """Run unsupervised clustering (KMeans, MiniBatchKMeans, Agglomerative, GMM, DBSCAN) and compute cluster metrics."""
+    dataset = db.get(Dataset, dataset_id)
+    if dataset is None:
+        raise HTTPException(status_code=404, detail="Dataset not found.")
+
+    try:
+        from app.services.dataset_schema import load_dataset_dataframe
+        df = load_dataset_dataframe(dataset.path)
+    except Exception:
+        df = pd.read_csv(dataset.path)
+
+    try:
+        return {
+            "dataset_id": dataset.id,
+            **run_clustering(
+                df,
+                method=payload.method,
+                n_clusters=payload.n_clusters,
+                features=payload.features,
+            ),
+        }
+    except UnsupervisedError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+@router.post("/datasets/{dataset_id}/unsupervised/pca")
+def pca_dataset(
+    dataset_id: str,
+    payload: PcaRequest,
+    db: Session = Depends(get_db),
+):
+    """Run Principal Component Analysis (PCA) dimensionality reduction with component loadings."""
+    dataset = db.get(Dataset, dataset_id)
+    if dataset is None:
+        raise HTTPException(status_code=404, detail="Dataset not found.")
+
+    try:
+        from app.services.dataset_schema import load_dataset_dataframe
+        df = load_dataset_dataframe(dataset.path)
+    except Exception:
+        df = pd.read_csv(dataset.path)
+
+    try:
+        return {
+            "dataset_id": dataset.id,
+            **run_pca(
+                df,
+                n_components=payload.n_components,
+                features=payload.features,
+            ),
+        }
+    except UnsupervisedError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+@router.post("/datasets/{dataset_id}/unsupervised/anomaly")
+def detect_dataset_anomalies(
+    dataset_id: str,
+    payload: AnomalyDetectionRequest,
+    db: Session = Depends(get_db),
+):
+    """Run unsupervised anomaly and outlier detection (Isolation Forest, LOF, Elliptic Envelope)."""
+    dataset = db.get(Dataset, dataset_id)
+    if dataset is None:
+        raise HTTPException(status_code=404, detail="Dataset not found.")
+
+    try:
+        from app.services.dataset_schema import load_dataset_dataframe
+        df = load_dataset_dataframe(dataset.path)
+    except Exception:
+        df = pd.read_csv(dataset.path)
+
+    try:
+        return {
+            "dataset_id": dataset.id,
+            **run_anomaly_detection(
+                df,
+                method=payload.method,
+                contamination=payload.contamination,
+                features=payload.features,
+            ),
+        }
+    except UnsupervisedError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
     

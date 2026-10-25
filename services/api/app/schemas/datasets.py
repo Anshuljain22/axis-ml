@@ -79,3 +79,34 @@ class RunOut(BaseModel):
     error: str | None
     created_at: datetime
     model_config = ConfigDict(from_attributes=True)
+
+
+class HypothesisTestRequest(BaseModel):
+    test_type: str
+    col_a: str
+    col_b: str | None = None
+    group_col: str | None = None
+    alpha: float = 0.05
+
+
+class FeatureSelectionRequest(BaseModel):
+    target_column: str
+    k: int | None = None
+
+
+class ClusteringRequest(BaseModel):
+    method: str = "kmeans"
+    n_clusters: int = 3
+    features: list[str] | None = None
+
+
+class PcaRequest(BaseModel):
+    n_components: int = 2
+    features: list[str] | None = None
+
+
+class AnomalyDetectionRequest(BaseModel):
+    method: str = "isolation_forest"
+    contamination: float = 0.05
+    features: list[str] | None = None
+

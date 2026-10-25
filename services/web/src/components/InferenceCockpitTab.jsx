@@ -58,8 +58,9 @@ export default function InferenceCockpitTab({
     if (activeDataset?.id) {
       api.inspectDataset(activeDataset.id)
         .then((inspect) => {
-          if (isMounted && inspect.head) {
-            setSampleRows(inspect.head);
+          const previewRows = inspect?.inspection?.preview || inspect?.preview || inspect?.head || [];
+          if (isMounted && previewRows.length > 0) {
+            setSampleRows(previewRows);
           }
         })
         .catch(() => {});
@@ -73,9 +74,20 @@ export default function InferenceCockpitTab({
     if (!selectedRun) return;
 
     // Try to get feature names from run parameters or inspect data
-    const features = selectedRun.parameters?.feature_columns 
-      ? JSON.parse(typeof selectedRun.parameters.feature_columns === 'string' ? selectedRun.parameters.feature_columns : JSON.stringify(selectedRun.parameters.feature_columns))
-      : (sampleRows[0] ? Object.keys(sampleRows[0]).filter(k => k !== selectedRun.parameters?.target_column) : []);
+    let features = [];
+    const rawFeatures = selectedRun.parameters?.feature_columns;
+    if (rawFeatures) {
+      try {
+        features = typeof rawFeatures === 'string' ? JSON.parse(rawFeatures) : rawFeatures;
+      } catch (e) {
+        features = [];
+      }
+    }
+    if (!Array.isArray(features) || features.length === 0) {
+      if (sampleRows[0]) {
+        features = Object.keys(sampleRows[0]).filter(k => k !== selectedRun.parameters?.target_column);
+      }
+    }
 
     const initial = {};
     const firstSample = sampleRows[0] || {};
@@ -336,7 +348,7 @@ export default function InferenceCockpitTab({
 
           <button
             type="button"
-            className="btn btn-racing"
+            className="btn btn-primary"
             style={{ width: '100%', padding: '0.75rem' }}
             disabled={batchPredicting || !selectedRun}
             onClick={handleBatchPredict}

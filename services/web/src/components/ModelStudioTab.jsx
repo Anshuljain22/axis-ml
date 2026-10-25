@@ -38,6 +38,15 @@ export default function ModelStudioTab({
   const [gbLearningRate, setGbLearningRate] = useState(0.1);
   const [gbEstimators, setGbEstimators] = useState(100);
 
+  // Preprocessing
+  const [numericScaler, setNumericScaler] = useState('standard');
+  const [numericImputer, setNumericImputer] = useState('median');
+
+  // Automated Feature Selection State
+  const [fsLoading, setFsLoading] = useState(false);
+  const [fsResult, setFsResult] = useState(null);
+  const [fsError, setFsError] = useState(null);
+
   // Training state
   const [training, setTraining] = useState(false);
   const [trainResult, setTrainResult] = useState(null);
@@ -51,7 +60,12 @@ export default function ModelStudioTab({
     api.inspectDataset(activeDataset.id)
       .then((data) => {
         setInspectData(data);
-        const cols = data.columns || [];
+        const colDetails = data?.inspection?.column_details || activeDataset?.profile?.columns || [];
+        const schemaCols = Array.isArray(data?.schema?.columns) ? data.schema.columns : [];
+        const cols = colDetails.length > 0
+          ? colDetails.map((c) => (typeof c === 'string' ? c : c.name)).filter(Boolean)
+          : (schemaCols.length > 0 ? schemaCols.map((c) => (typeof c === 'string' ? c : c.name)).filter(Boolean) : (data.columns || []));
+
         if (cols.length > 0) {
           // Default target to the last column
           const lastCol = cols[cols.length - 1];
@@ -70,7 +84,11 @@ export default function ModelStudioTab({
     );
   }
 
-  const columns = inspectData?.columns || [];
+  const colDetails = inspectData?.inspection?.column_details || activeDataset?.profile?.columns || [];
+  const schemaCols = Array.isArray(inspectData?.schema?.columns) ? inspectData.schema.columns : [];
+  const columns = colDetails.length > 0
+    ? colDetails.map((c) => (typeof c === 'string' ? c : c.name)).filter(Boolean)
+    : (schemaCols.length > 0 ? schemaCols.map((c) => (typeof c === 'string' ? c : c.name)).filter(Boolean) : (inspectData?.columns || []));
 
   const handleTargetChange = (newTarget) => {
     setTargetColumn(newTarget);
@@ -125,13 +143,14 @@ export default function ModelStudioTab({
     try {
       const payload = {
         target_column: targetColumn,
-        feature_columns: selectedFeatures,
-        model_type: modelType,
+        model_name: modelType || 'auto',
+        task_type: 'auto',
         split_strategy: splitStrategy,
         test_size: Number(testSize),
-        time_column: splitStrategy === 'chronological' ? timeColumn : null,
-        cv_folds: useCrossVal ? Number(cvFolds) : null,
-        hyperparameters: getHyperparams(),
+        cv_folds: useCrossVal ? Number(cvFolds) : 0,
+        numeric_scaler: numericScaler,
+        numeric_imputer: numericImputer,
+        datetime_handling: 'extract',
       };
 
       const result = await api.trainModel(activeDataset.id, payload);
@@ -141,6 +160,32 @@ export default function ModelStudioTab({
       setTrainError(err.message || 'Model training failed.');
     } finally {
       setTraining(false);
+    }
+  };
+
+  const handleRunFeatureSelection = async () => {
+    if (!targetColumn) {
+      setFsError('Please select a target column first.');
+      return;
+    }
+    setFsLoading(true);
+    setFsError(null);
+    try {
+      const res = await api.runFeatureSelection(activeDataset.id, {
+        target_column: targetColumn,
+        k: Math.max(1, Math.min(10, Math.ceil((columns.length - 1) * 0.5))),
+      });
+      setFsResult(res);
+    } catch (err) {
+      setFsError(err.message || 'Feature selection failed.');
+    } finally {
+      setFsLoading(false);
+    }
+  };
+
+  const handleApplyRecommendedFeatures = () => {
+    if (fsResult?.recommended_features) {
+      setSelectedFeatures(fsResult.recommended_features);
     }
   };
 
@@ -180,13 +225,36 @@ export default function ModelStudioTab({
               value={modelType}
               onChange={(e) => setModelType(e.target.value)}
             >
-              <optgroup label="Ensemble Models">
-                <option value="random_forest">Random Forest (Robust, Non-linear)</option>
-                <option value="gradient_boosting">Gradient Boosting (High Accuracy)</option>
+              <optgroup label="Auto / Adaptive">
+                <option value="auto">Auto (Adaptive Best Practice)</option>
               </optgroup>
-              <optgroup label="Linear Models">
+              <optgroup label="Linear & Regularized">
                 <option value="ridge">Ridge Regression (L2 Regularized)</option>
-                <option value="logistic_regression">Logistic Regression (Classification)</option>
+                <option value="linear_regression">Linear Regression (OLS)</option>
+                <option value="lasso">Lasso Regression (L1 Sparse)</option>
+                <option value="elastic_net">ElasticNet (L1 + L2)</option>
+                <option value="bayesian_ridge">Bayesian Ridge Regression</option>
+                <option value="logistic_regression">Logistic Regression (Classifier)</option>
+              </optgroup>
+              <optgroup label="Decision Trees & Boosting Ensembles">
+                <option value="random_forest">Random Forest (Bagging Ensemble)</option>
+                <option value="extra_trees">Extra Trees (Extremely Randomized)</option>
+                <option value="gradient_boosting">Gradient Boosting (Residual Minimization)</option>
+                <option value="hist_gradient_boosting">HistGradientBoosting (Fast LightGBM-Style)</option>
+                <option value="adaboost">AdaBoost (Adaptive Boosting)</option>
+                <option value="decision_tree">Decision Tree (Single Tree)</option>
+              </optgroup>
+              <optgroup label="Distance & Support Vectors">
+                <option value="svm">Support Vector Machine (SVC / SVR)</option>
+                <option value="knn">K-Nearest Neighbors (KNN)</option>
+              </optgroup>
+              <optgroup label="Neural & Probabilistic">
+                <option value="mlp">Multi-Layer Perceptron (Deep Tabular Neural Net)</option>
+                <option value="naive_bayes">Gaussian Naive Bayes (Classifier)</option>
+              </optgroup>
+              <optgroup label="Meta-Ensembles">
+                <option value="voting">Voting Ensemble (Soft / Weighted Average)</option>
+                <option value="stacking">Stacking Ensemble (Multi-Level Stacking)</option>
               </optgroup>
             </select>
           </div>
@@ -375,21 +443,62 @@ export default function ModelStudioTab({
             </div>
           </div>
 
-          {/* Feature Selection Multi-Check */}
+          {/* Feature Selection Multi-Check & Automated Assistant */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
               <label className="form-label" style={{ margin: 0 }}>
                 Features (X) — {selectedFeatures.length} of {columns.length - 1} Selected
               </label>
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <button type="button" className="btn btn-ghost" style={{ padding: '0.1rem 0.4rem', fontSize: '0.7rem' }} onClick={handleSelectAllFeatures}>
-                  Select All
+              <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+                <button
+                  type="button"
+                  className="btn btn-ghost"
+                  style={{ padding: '0.15rem 0.5rem', fontSize: '0.7rem', color: 'var(--cyan-neon)', borderColor: 'rgba(0, 229, 255, 0.3)' }}
+                  onClick={handleRunFeatureSelection}
+                  disabled={fsLoading || !targetColumn}
+                >
+                  {fsLoading ? 'Evaluating...' : '⚡ Assistant'}
                 </button>
-                <button type="button" className="btn btn-ghost" style={{ padding: '0.1rem 0.4rem', fontSize: '0.7rem' }} onClick={handleDeselectAllFeatures}>
+                <button type="button" className="btn btn-ghost" style={{ padding: '0.15rem 0.4rem', fontSize: '0.7rem' }} onClick={handleSelectAllFeatures}>
+                  All
+                </button>
+                <button type="button" className="btn btn-ghost" style={{ padding: '0.15rem 0.4rem', fontSize: '0.7rem' }} onClick={handleDeselectAllFeatures}>
                   Clear
                 </button>
               </div>
             </div>
+
+            {/* Feature Selection Assistant Results */}
+            {fsResult && (
+              <div style={{ marginBottom: '0.75rem', padding: '0.75rem', background: 'rgba(0, 229, 255, 0.08)', border: '1px solid rgba(0, 229, 255, 0.25)', borderRadius: 'var(--radius-sm)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--cyan-neon)' }}>
+                    TOP RECOMMENDED FEATURES ({fsResult.recommended_feature_count})
+                  </span>
+                  <button
+                    type="button"
+                    className="btn btn-cyan"
+                    style={{ padding: '0.15rem 0.5rem', fontSize: '0.7rem' }}
+                    onClick={handleApplyRecommendedFeatures}
+                  >
+                    Apply Top {fsResult.recommended_feature_count}
+                  </button>
+                </div>
+                <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                  {fsResult.feature_rankings?.slice(0, 6).map((f) => (
+                    <span key={f.feature} className={`badge ${f.recommended ? 'badge-cyan' : 'badge-muted'}`} style={{ fontSize: '0.7rem' }}>
+                      #{f.overall_rank} {f.feature} (MI: {f.mutual_information ?? 0})
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {fsError && (
+              <div style={{ marginBottom: '0.5rem', color: 'var(--rose-alert)', fontSize: '0.75rem' }}>
+                {fsError}
+              </div>
+            )}
 
             <div style={{ 
               maxHeight: 140, 
@@ -416,9 +525,46 @@ export default function ModelStudioTab({
             </div>
           </div>
 
+          {/* Preprocessing Pipeline (Scalers & Imputers) */}
+          <div style={{ background: 'rgba(14, 20, 32, 0.6)', padding: '1rem', borderRadius: 'var(--radius-sm)' }}>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginBottom: '0.5rem' }}>
+              TRANSFORMATION & IMPUTATION PIPELINE
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div>
+                <label className="form-label">Numeric Scaler</label>
+                <select
+                  className="form-select"
+                  value={numericScaler}
+                  onChange={(e) => setNumericScaler(e.target.value)}
+                >
+                  <option value="standard">Standard (Z-Score)</option>
+                  <option value="minmax">Min-Max (0 to 1)</option>
+                  <option value="robust">Robust (IQR)</option>
+                  <option value="quantile">Quantile (Normal)</option>
+                  <option value="power">Power (Yeo-Johnson)</option>
+                  <option value="none">Unscaled (Raw)</option>
+                </select>
+              </div>
+              <div>
+                <label className="form-label">Numeric Imputer</label>
+                <select
+                  className="form-select"
+                  value={numericImputer}
+                  onChange={(e) => setNumericImputer(e.target.value)}
+                >
+                  <option value="median">Median Imputation</option>
+                  <option value="mean">Mean Imputation</option>
+                  <option value="knn">KNN Imputer (k=5)</option>
+                  <option value="constant">Constant (0.0)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
           {/* Launch Button */}
           <button
-            className="btn btn-racing"
+            className="btn btn-primary"
             style={{ width: '100%', padding: '0.75rem', fontSize: '0.95rem', marginTop: '0.5rem' }}
             disabled={training}
             onClick={handleTrain}
@@ -489,24 +635,73 @@ export default function ModelStudioTab({
                   Validation Metrics
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.75rem' }}>
-                  {Object.entries(trainResult.metrics || {}).map(([metricKey, metricVal]) => (
-                    <div key={metricKey} style={{ background: 'rgba(14, 20, 32, 0.7)', padding: '0.85rem', borderRadius: 'var(--radius-sm)' }}>
-                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', textTransform: 'uppercase' }}>
-                        {metricKey}
+                  {Object.entries(trainResult.metrics || {})
+                    .filter(([k, v]) => typeof v === 'number' && !['feature_importance', 'confusion_matrix', 'cross_validation'].includes(k))
+                    .map(([metricKey, metricVal]) => (
+                      <div key={metricKey} style={{ background: 'rgba(14, 20, 32, 0.7)', padding: '0.85rem', borderRadius: 'var(--radius-sm)' }}>
+                        <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', textTransform: 'uppercase' }}>
+                          {metricKey.replace('_', ' ')}
+                        </div>
+                        <div style={{ 
+                          fontSize: '1.35rem', 
+                          fontWeight: 700, 
+                          color: metricKey.includes('r2') || metricKey.includes('accuracy') || metricKey.includes('f1') ? 'var(--cyan-neon)' : 'var(--text-primary)', 
+                          fontFamily: 'var(--font-mono)',
+                          marginTop: '0.2rem' 
+                        }}>
+                          {metricVal.toFixed(4)}
+                        </div>
                       </div>
-                      <div style={{ 
-                        fontSize: '1.35rem', 
-                        fontWeight: 700, 
-                        color: metricKey.includes('r2') || metricKey.includes('accuracy') || metricKey.includes('f1') ? 'var(--cyan-neon)' : 'var(--text-primary)', 
-                        fontFamily: 'var(--font-mono)',
-                        marginTop: '0.2rem' 
-                      }}>
-                        {typeof metricVal === 'number' ? metricVal.toFixed(4) : String(metricVal)}
-                      </div>
-                    </div>
-                  ))}
+                    ))}
                 </div>
               </div>
+
+              {/* Permutation Feature Importance Section */}
+              {Array.isArray(trainResult.metrics?.feature_importance) && trainResult.metrics.feature_importance.length > 0 && (
+                <div style={{ background: 'rgba(14, 20, 32, 0.8)', padding: '1.25rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.85rem' }}>
+                    <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--cyan-neon)', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <Sparkles size={14} />
+                      Permutation Feature Importance (Explainability)
+                    </div>
+                    <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+                      Holdout Score Impact
+                    </span>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                    {(() => {
+                      const maxImp = Math.max(...trainResult.metrics.feature_importance.map(f => Math.abs(f.importance)), 0.0001);
+                      return trainResult.metrics.feature_importance.map((f, i) => {
+                        const pct = Math.min(100, Math.max(5, (Math.abs(f.importance) / maxImp) * 100));
+                        return (
+                          <div key={f.feature} style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem' }}>
+                              <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, color: 'var(--text-primary)' }}>
+                                #{i + 1} {f.feature}
+                              </span>
+                              <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--cyan-neon)', fontSize: '0.75rem' }}>
+                                Δ {f.importance.toFixed(4)} (±{f.std?.toFixed(4)})
+                              </span>
+                            </div>
+                            <div style={{ background: 'rgba(255,255,255,0.06)', height: '6px', borderRadius: '3px', overflow: 'hidden' }}>
+                              <div
+                                style={{
+                                  width: `${pct}%`,
+                                  height: '100%',
+                                  background: i === 0 ? 'var(--orange-racing)' : 'var(--cyan-neon)',
+                                  borderRadius: '3px',
+                                  transition: 'width 0.4s ease',
+                                }}
+                              />
+                            </div>
+                          </div>
+                        );
+                      });
+                    })()}
+                  </div>
+                </div>
+              )}
 
               {/* Action Buttons: Navigate to Predict or Leaderboard */}
               <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>

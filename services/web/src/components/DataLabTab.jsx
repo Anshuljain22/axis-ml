@@ -75,10 +75,40 @@ export default function DataLabTab({ activeDataset }) {
     );
   }
 
-  const columns = inspectData?.columns || [];
-  const rows = inspectData?.head || [];
-  const quality = inspectData?.quality_report || {};
-  const schemaCols = schemaData?.columns || {};
+  const inspection = inspectData?.inspection || {};
+  const schemaObj = inspectData?.schema || schemaData || {};
+  
+  const schemaList = Array.isArray(schemaObj?.columns) ? schemaObj.columns : [];
+  const columnDetails = inspection?.column_details || activeDataset?.profile?.columns || [];
+  
+  // Extract column name strings
+  const columns = columnDetails.length > 0 
+    ? columnDetails.map(c => typeof c === 'string' ? c : c.name).filter(Boolean)
+    : schemaList.map(c => typeof c === 'string' ? c : c.name).filter(Boolean);
+
+  const rows = inspection?.preview || inspectData?.head || inspectData?.preview || [];
+
+  const quality = {
+    row_count: inspection?.rows ?? activeDataset?.rows ?? activeDataset?.row_count ?? 0,
+    column_count: inspection?.columns ?? activeDataset?.columns ?? activeDataset?.column_count ?? 0,
+    missing_cells: activeDataset?.quality?.missing_cells ?? 0,
+    duplicate_rows: inspection?.duplicate_rows ?? activeDataset?.quality?.duplicate_rows ?? 0,
+    memory_usage_bytes: inspection?.memory_usage_bytes ?? activeDataset?.bytes ?? 0,
+    missing_percentage: activeDataset?.quality?.missing_cells ? ((activeDataset.quality.missing_cells / ((activeDataset.rows || 1) * (activeDataset.columns || 1))) * 100) : 0,
+  };
+
+  const schemaCols = {};
+  schemaList.forEach(c => { if (c && c.name) schemaCols[c.name] = c; });
+  columnDetails.forEach(c => {
+    if (typeof c === 'object' && c.name) {
+      schemaCols[c.name] = {
+        ...schemaCols[c.name],
+        inferred_dtype: c.dtype || schemaCols[c.name]?.physical_type,
+        logical_type: schemaCols[c.name]?.logical_type || (c.dtype?.includes('int') || c.dtype?.includes('float') ? 'numeric' : 'categorical'),
+        null_count: c.missing_count ?? 0
+      };
+    }
+  });
 
   // Filter rows based on search
   const filteredRows = rows.filter((r) => {

@@ -24,6 +24,7 @@ export default function CleaningPipelineTab({
   const [imputeNumeric, setImputeNumeric] = useState('median');
   const [imputeCategorical, setImputeCategorical] = useState('mode');
   const [dropDuplicates, setDropDuplicates] = useState(true);
+  const [outlierMethod, setOutlierMethod] = useState('none');
   const [selectedDropCols, setSelectedDropCols] = useState([]);
   const [newDatasetName, setNewDatasetName] = useState('');
 
@@ -62,7 +63,7 @@ export default function CleaningPipelineTab({
     );
   }
 
-  const columns = inspectData?.columns || [];
+  const columns = inspectData?.column_details?.map(c => c.name) || inspectData?.columns || [];
 
   const handleToggleDropCol = (col) => {
     if (selectedDropCols.includes(col)) {
@@ -73,13 +74,53 @@ export default function CleaningPipelineTab({
   };
 
   const getOperationsPayload = () => {
-    return {
-      drop_na: dropMissing,
-      impute_numeric: imputeNumeric !== 'none' ? imputeNumeric : null,
-      impute_categorical: imputeCategorical !== 'none' ? imputeCategorical : null,
-      drop_duplicates: dropDuplicates,
-      drop_columns: selectedDropCols,
-    };
+    const ops = [];
+    if (dropDuplicates) {
+      ops.push({ operation: 'drop_duplicates' });
+    }
+    if (selectedDropCols && selectedDropCols.length > 0) {
+      selectedDropCols.forEach((col) => {
+        ops.push({ operation: 'drop_column', column: col });
+      });
+    }
+    if (dropMissing) {
+      columns.forEach((col) => {
+        ops.push({ operation: 'drop_missing_rows', column: col });
+      });
+    } else {
+      if (imputeNumeric === 'ffill') {
+        columns.forEach((col) => ops.push({ operation: 'ffill', column: col }));
+      } else if (imputeNumeric === 'bfill') {
+        columns.forEach((col) => ops.push({ operation: 'bfill', column: col }));
+      } else if (imputeNumeric === 'knn') {
+        const numCols = inspectData?.column_details?.filter(c => c.dtype.includes('int') || c.dtype.includes('float'))?.map(c => c.name) || columns;
+        numCols.forEach((col) => ops.push({ operation: 'knn_impute', column: col, n_neighbors: 5 }));
+      } else if (imputeNumeric === 'mean' || imputeNumeric === 'median') {
+        const numCols = inspectData?.column_details?.filter(c => c.dtype.includes('int') || c.dtype.includes('float'))?.map(c => c.name) || columns;
+        numCols.forEach((col) => ops.push({ operation: 'fill_missing', column: col, strategy: imputeNumeric }));
+      } else if (imputeNumeric === 'zero') {
+        const numCols = inspectData?.column_details?.filter(c => c.dtype.includes('int') || c.dtype.includes('float'))?.map(c => c.name) || columns;
+        numCols.forEach((col) => ops.push({ operation: 'fill_missing', column: col, strategy: 'constant', value: 0.0 }));
+      }
+
+      if (imputeCategorical === 'mode') {
+        const catCols = inspectData?.column_details?.filter(c => !c.dtype.includes('int') && !c.dtype.includes('float'))?.map(c => c.name) || [];
+        catCols.forEach((col) => ops.push({ operation: 'fill_missing', column: col, strategy: 'mode' }));
+      } else if (imputeCategorical === 'constant') {
+        const catCols = inspectData?.column_details?.filter(c => !c.dtype.includes('int') && !c.dtype.includes('float'))?.map(c => c.name) || [];
+        catCols.forEach((col) => ops.push({ operation: 'fill_missing', column: col, strategy: 'constant', value: 'missing' }));
+      }
+    }
+
+    if (outlierMethod === 'iqr') {
+      const numCols = inspectData?.column_details?.filter(c => c.dtype.includes('int') || c.dtype.includes('float'))?.map(c => c.name) || columns;
+      numCols.forEach((col) => ops.push({ operation: 'cap_outliers', column: col, multiplier: 1.5 }));
+    } else if (outlierMethod === 'zscore') {
+      const numCols = inspectData?.column_details?.filter(c => c.dtype.includes('int') || c.dtype.includes('float'))?.map(c => c.name) || columns;
+      numCols.forEach((col) => ops.push({ operation: 'cap_outliers_zscore', column: col, z_threshold: 3.0 }));
+    }
+
+    return ops.length > 0 ? ops : [{ operation: 'drop_duplicates' }];
   };
 
   const handlePreviewCleaning = async () => {
@@ -181,7 +222,10 @@ export default function CleaningPipelineTab({
                         <option value="none">None (Keep NaN)</option>
                         <option value="median">Median (Robust)</option>
                         <option value="mean">Mean</option>
-                        <option value="zero">Zero Fill</option>
+                        <option value="zero">Zero Fill (0.0)</option>
+                        <option value="ffill">Forward Fill (ffill)</option>
+                        <option value="bfill">Backward Fill (bfill)</option>
+                        <option value="knn">KNN Imputation (k=5)</option>
                       </select>
                     </div>
 
@@ -200,6 +244,22 @@ export default function CleaningPipelineTab({
                   </>
                 )}
               </div>
+            </div>
+
+            {/* Outlier Detection & Capping */}
+            <div style={{ background: 'rgba(14, 20, 32, 0.6)', padding: '1rem', borderRadius: 'var(--radius-sm)' }}>
+              <div style={{ fontWeight: 600, fontSize: '0.85rem', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>
+                Outlier Detection & Capping
+              </div>
+              <select
+                className="form-select"
+                value={outlierMethod}
+                onChange={(e) => setOutlierMethod(e.target.value)}
+              >
+                <option value="none">None (Preserve Extreme Values)</option>
+                <option value="iqr">Tukey's IQR Fences (1.5x IQR Capping)</option>
+                <option value="zscore">Z-Score Outlier Capping (3.0 Sigma)</option>
+              </select>
             </div>
 
             {/* Deduplication */}

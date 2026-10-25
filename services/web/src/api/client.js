@@ -70,6 +70,29 @@ export const api = {
     const query = timeColumn ? `?time_column=${encodeURIComponent(timeColumn)}` : '';
     return request(`/api/v1/datasets/${id}/eda/time-series${query}`);
   },
+  getNormality: (id, col) => {
+    const query = col ? `?column=${encodeURIComponent(col)}` : '';
+    return request(`/api/v1/datasets/${id}/eda/normality${query}`);
+  },
+  getVif: (id) => request(`/api/v1/datasets/${id}/eda/vif`),
+  getStationarity: (id, dtCol, valCol) => {
+    const params = new URLSearchParams();
+    if (dtCol) params.append('datetime_column', dtCol);
+    if (valCol) params.append('value_column', valCol);
+    const qs = params.toString() ? `?${params.toString()}` : '';
+    return request(`/api/v1/datasets/${id}/eda/stationarity${qs}`);
+  },
+  runHypothesisTest: (id, payload) => request(`/api/v1/datasets/${id}/eda/hypothesis-test`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  }),
+  getCorrelationsExtended: (id) => request(`/api/v1/datasets/${id}/eda/correlations-extended`),
+  runFeatureSelection: (id, payload) => request(`/api/v1/datasets/${id}/feature-selection`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  }),
 
   // Cleaning & Preprocessing Pipeline
   previewCleaning: (id, operations) => {
@@ -103,6 +126,23 @@ export const api = {
   },
   getRun: (id) => request(`/api/v1/runs/${id}`),
   compareRuns: (datasetId) => request(`/api/v1/datasets/${datasetId}/runs/compare`),
+
+  // Unsupervised Learning & Anomaly Detection
+  runClustering: (id, payload) => request(`/api/v1/datasets/${id}/unsupervised/cluster`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  }),
+  runPca: (id, payload) => request(`/api/v1/datasets/${id}/unsupervised/pca`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  }),
+  runAnomalyDetection: (id, payload) => request(`/api/v1/datasets/${id}/unsupervised/anomaly`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  }),
 
   // Live Inference
   predictSingle: (runId, inputs) => request(`/api/v1/runs/${runId}/predict`, {

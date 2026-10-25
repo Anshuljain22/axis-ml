@@ -12,6 +12,11 @@ class CleaningOperation(BaseModel):
         "drop_column",
         "convert_type",
         "cap_outliers",
+        "ffill",
+        "bfill",
+        "knn_impute",
+        "cap_outliers_zscore",
+        "rename_column",
     ]
 
     column: str | None = None
@@ -27,6 +32,9 @@ class CleaningOperation(BaseModel):
     ] | None = None
 
     multiplier: float = Field(default=1.5, gt=0)
+    z_threshold: float = Field(default=3.0, gt=0)
+    n_neighbors: int = Field(default=5, ge=1)
+    new_name: str | None = None
 
     @model_validator(mode="after")
     def validate_operation_fields(self):
@@ -36,6 +44,11 @@ class CleaningOperation(BaseModel):
             "drop_column",
             "convert_type",
             "cap_outliers",
+            "ffill",
+            "bfill",
+            "knn_impute",
+            "cap_outliers_zscore",
+            "rename_column",
         } and not self.column:
             raise ValueError(
                 f"'{self.operation}' requires a column."
@@ -53,6 +66,9 @@ class CleaningOperation(BaseModel):
 
         if self.operation == "convert_type" and not self.dtype:
             raise ValueError("'convert_type' requires a dtype.")
+
+        if self.operation == "rename_column" and not self.new_name:
+            raise ValueError("'rename_column' requires 'new_name'.")
 
         return self
 
