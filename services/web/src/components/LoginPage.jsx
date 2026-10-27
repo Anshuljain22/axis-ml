@@ -144,26 +144,27 @@ export default function LoginPage({ onLoginSuccess }) {
     <div style={{
       minHeight: '100vh',
       display: 'flex',
-      background: 'var(--bg-base)',
-      color: 'var(--text-primary)',
+      background: 'var(--ks-paper)',
+      color: 'var(--ks-ink)',
       fontFamily: 'var(--font-sans)',
       overflow: 'hidden',
     }}>
-      {/* LEFT COLUMN: Minimalist Login & Authentication Form */}
+      {/* LEFT COLUMN: Clean Warm Paper Auth Experience */}
       <div style={{
-        flex: '0 0 46%',
+        flex: '0 0 44%',
         minWidth: '420px',
-        maxWidth: '560px',
-        padding: '3rem 3.5rem',
+        maxWidth: '540px',
+        padding: '3.25rem 3.5rem',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
         borderRight: '1px solid var(--border-subtle)',
-        background: 'var(--bg-surface)',
+        background: 'var(--ks-paper-raised)',
         zIndex: 10,
         position: 'relative',
+        boxShadow: 'var(--ks-lift-1)',
       }}>
-        {/* Subtle top ambient glow */}
+        {/* Subtle top ambient warmth */}
         <div style={{
           position: 'absolute',
           top: -80,
@@ -171,50 +172,54 @@ export default function LoginPage({ onLoginSuccess }) {
           width: 240,
           height: 240,
           borderRadius: '50%',
-          background: 'rgba(255, 255, 255, 0.03)',
+          background: 'rgba(197, 139, 36, 0.05)',
           filter: 'blur(60px)',
           pointerEvents: 'none',
         }} />
 
         {/* Brand Mark */}
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '2.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '2.5rem' }}>
             <div style={{
-              width: 36,
-              height: 36,
+              width: 38,
+              height: 38,
               borderRadius: '8px',
-              background: '#f8fafc',
+              background: 'var(--ks-ink)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 0 20px rgba(255, 255, 255, 0.15)',
+              boxShadow: '0 2px 8px rgba(25, 24, 23, 0.15)',
+              position: 'relative',
             }}>
               <div style={{
                 width: 14,
                 height: 14,
                 borderRadius: '3px',
-                background: '#090a0f',
+                background: 'var(--ks-kinpaku)',
                 transform: 'rotate(45deg)',
+                boxShadow: '0 0 8px rgba(197, 139, 36, 0.6)',
               }} />
             </div>
             <div>
               <div style={{
-                fontSize: '1.25rem',
+                fontSize: '1.3rem',
                 fontWeight: 800,
                 letterSpacing: '-0.03em',
                 fontFamily: 'var(--font-display)',
-                color: '#f8fafc',
+                color: 'var(--ks-ink)',
+                lineHeight: 1.1,
               }}>
                 AXIS ML
               </div>
               <div style={{
-                fontSize: '0.62rem',
+                fontSize: '0.64rem',
                 letterSpacing: '0.12em',
-                color: 'var(--text-muted)',
+                color: 'var(--ks-text-muted)',
                 fontFamily: 'var(--font-mono)',
                 textTransform: 'uppercase',
+                marginTop: '2px',
               }}>
-                Neural Data Science & AI Workbench
+                Data Science & AI Workbench
               </div>
             </div>
           </div>
@@ -224,30 +229,30 @@ export default function LoginPage({ onLoginSuccess }) {
             <h1 style={{
               fontSize: '1.75rem',
               fontWeight: 700,
-              letterSpacing: '-0.02em',
-              color: '#f8fafc',
-              marginBottom: '0.5rem',
+              letterSpacing: '-0.025em',
+              color: 'var(--ks-ink)',
+              marginBottom: '0.45rem',
             }}>
               Authenticate to Platform
             </h1>
             <p style={{
-              fontSize: '0.85rem',
-              color: 'var(--text-secondary)',
-              lineHeight: 1.5,
+              fontSize: '0.86rem',
+              color: 'var(--ks-text-muted)',
+              lineHeight: 1.55,
             }}>
-              Sign in with institutional credentials or launch an instant guest session to explore the active models and telemetry pipelines.
+              Sign in with institutional credentials or launch an instant guest session to inspect active models, diagnostics and inference pipelines.
             </p>
           </div>
 
           {/* Form */}
-          <form onSubmit={handleCredentialsSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
+          <form onSubmit={handleCredentialsSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.15rem' }}>
             {/* Email Field */}
             <div>
               <label style={{
                 display: 'block',
-                fontSize: '0.75rem',
+                fontSize: '0.74rem',
                 fontWeight: 600,
-                color: 'var(--text-muted)',
+                color: 'var(--ks-text-muted)',
                 marginBottom: '0.4rem',
                 textTransform: 'uppercase',
                 letterSpacing: '0.06em',
@@ -263,7 +268,7 @@ export default function LoginPage({ onLoginSuccess }) {
                     left: '0.9rem',
                     top: '50%',
                     transform: 'translateY(-50%)',
-                    color: 'var(--text-muted)',
+                    color: 'var(--ks-text-faint)',
                   }}
                 />
                 <input
@@ -274,21 +279,22 @@ export default function LoginPage({ onLoginSuccess }) {
                   style={{
                     width: '100%',
                     padding: '0.7rem 0.9rem 0.7rem 2.5rem',
-                    background: 'rgba(255, 255, 255, 0.03)',
-                    border: '1px solid var(--border-subtle)',
+                    background: 'var(--ks-paper-raised)',
+                    border: '1px solid var(--ks-gray-2)',
                     borderRadius: '8px',
-                    color: '#f8fafc',
+                    color: 'var(--ks-ink)',
                     fontSize: '0.88rem',
                     outline: 'none',
                     transition: 'all var(--transition-fast)',
+                    boxShadow: 'var(--ks-track-recess)',
                   }}
                   onFocus={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.35)';
-                    e.currentTarget.style.boxShadow = '0 0 0 2px rgba(255, 255, 255, 0.06)';
+                    e.currentTarget.style.borderColor = 'var(--ks-kinpaku)';
+                    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(197, 139, 36, 0.12)';
                   }}
                   onBlur={(e) => {
-                    e.currentTarget.style.borderColor = 'var(--border-subtle)';
-                    e.currentTarget.style.boxShadow = 'none';
+                    e.currentTarget.style.borderColor = 'var(--ks-gray-2)';
+                    e.currentTarget.style.boxShadow = 'var(--ks-track-recess)';
                   }}
                 />
               </div>
@@ -298,16 +304,16 @@ export default function LoginPage({ onLoginSuccess }) {
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
                 <label style={{
-                  fontSize: '0.75rem',
+                  fontSize: '0.74rem',
                   fontWeight: 600,
-                  color: 'var(--text-muted)',
+                  color: 'var(--ks-text-muted)',
                   textTransform: 'uppercase',
                   letterSpacing: '0.06em',
                   fontFamily: 'var(--font-mono)',
                 }}>
                   Password
                 </label>
-                <a href="#reset" style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textDecoration: 'none' }}>
+                <a href="#reset" style={{ fontSize: '0.72rem', color: 'var(--ks-kinpaku-rich)', textDecoration: 'none', fontWeight: 600 }}>
                   Forgot?
                 </a>
               </div>
@@ -319,7 +325,7 @@ export default function LoginPage({ onLoginSuccess }) {
                     left: '0.9rem',
                     top: '50%',
                     transform: 'translateY(-50%)',
-                    color: 'var(--text-muted)',
+                    color: 'var(--ks-text-faint)',
                   }}
                 />
                 <input
@@ -330,21 +336,22 @@ export default function LoginPage({ onLoginSuccess }) {
                   style={{
                     width: '100%',
                     padding: '0.7rem 2.5rem 0.7rem 2.5rem',
-                    background: 'rgba(255, 255, 255, 0.03)',
-                    border: '1px solid var(--border-subtle)',
+                    background: 'var(--ks-paper-raised)',
+                    border: '1px solid var(--ks-gray-2)',
                     borderRadius: '8px',
-                    color: '#f8fafc',
+                    color: 'var(--ks-ink)',
                     fontSize: '0.88rem',
                     outline: 'none',
                     transition: 'all var(--transition-fast)',
+                    boxShadow: 'var(--ks-track-recess)',
                   }}
                   onFocus={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.35)';
-                    e.currentTarget.style.boxShadow = '0 0 0 2px rgba(255, 255, 255, 0.06)';
+                    e.currentTarget.style.borderColor = 'var(--ks-kinpaku)';
+                    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(197, 139, 36, 0.12)';
                   }}
                   onBlur={(e) => {
-                    e.currentTarget.style.borderColor = 'var(--border-subtle)';
-                    e.currentTarget.style.boxShadow = 'none';
+                    e.currentTarget.style.borderColor = 'var(--ks-gray-2)';
+                    e.currentTarget.style.boxShadow = 'var(--ks-track-recess)';
                   }}
                 />
                 <button
@@ -357,7 +364,7 @@ export default function LoginPage({ onLoginSuccess }) {
                     transform: 'translateY(-50%)',
                     background: 'transparent',
                     border: 'none',
-                    color: 'var(--text-muted)',
+                    color: 'var(--ks-text-muted)',
                     cursor: 'pointer',
                   }}
                 >
@@ -370,9 +377,9 @@ export default function LoginPage({ onLoginSuccess }) {
             <div>
               <label style={{
                 display: 'block',
-                fontSize: '0.75rem',
+                fontSize: '0.74rem',
                 fontWeight: 600,
-                color: 'var(--text-muted)',
+                color: 'var(--ks-text-muted)',
                 marginBottom: '0.4rem',
                 textTransform: 'uppercase',
                 letterSpacing: '0.06em',
@@ -386,22 +393,23 @@ export default function LoginPage({ onLoginSuccess }) {
                 style={{
                   width: '100%',
                   padding: '0.65rem 0.85rem',
-                  background: 'rgba(255, 255, 255, 0.03)',
-                  border: '1px solid var(--border-subtle)',
+                  background: 'var(--ks-paper-raised)',
+                  border: '1px solid var(--ks-gray-2)',
                   borderRadius: '8px',
-                  color: '#f8fafc',
+                  color: 'var(--ks-ink)',
                   fontSize: '0.84rem',
                   outline: 'none',
                   cursor: 'pointer',
+                  boxShadow: 'var(--ks-cap-lift)',
                 }}
               >
-                <option value="production" style={{ background: '#12151c' }}>
+                <option value="production">
                   Production Workbench (Verified Telemetry & Champion Runs)
                 </option>
-                <option value="research" style={{ background: '#12151c' }}>
+                <option value="research">
                   Research & Unsupervised Anomaly Lab
                 </option>
-                <option value="staging" style={{ background: '#12151c' }}>
+                <option value="staging">
                   Inference & Telemetry Staging Zone
                 </option>
               </select>
@@ -410,31 +418,17 @@ export default function LoginPage({ onLoginSuccess }) {
             {/* Submit Button */}
             <button
               type="submit"
-              className="btn"
+              className="btn btn-primary"
               style={{
                 marginTop: '0.5rem',
-                background: '#f8fafc',
-                color: '#090a0f',
-                fontWeight: 700,
-                fontSize: '0.88rem',
-                padding: '0.75rem',
+                padding: '0.8rem',
                 borderRadius: '8px',
-                border: 'none',
-                cursor: 'pointer',
+                fontSize: '0.88rem',
+                fontWeight: 700,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '0.5rem',
-                boxShadow: '0 4px 14px rgba(255, 255, 255, 0.12)',
-                transition: 'all var(--transition-fast)',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = '#e2e8f0';
-                e.currentTarget.style.transform = 'translateY(-1px)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = '#f8fafc';
-                e.currentTarget.style.transform = 'none';
               }}
             >
               <span>Sign In with Credentials</span>
@@ -448,7 +442,7 @@ export default function LoginPage({ onLoginSuccess }) {
             alignItems: 'center',
             gap: '1rem',
             margin: '1.5rem 0',
-            color: 'var(--text-dim)',
+            color: 'var(--ks-text-faint)',
             fontSize: '0.7rem',
             fontFamily: 'var(--font-mono)',
             textTransform: 'uppercase',
@@ -463,32 +457,22 @@ export default function LoginPage({ onLoginSuccess }) {
           <button
             type="button"
             onClick={handleGuestDemo}
+            className="btn btn-secondary"
             style={{
               width: '100%',
               padding: '0.75rem',
               borderRadius: '8px',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
-              background: 'rgba(255, 255, 255, 0.04)',
-              color: '#f8fafc',
               fontSize: '0.86rem',
               fontWeight: 600,
-              cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               gap: '0.6rem',
-              transition: 'all var(--transition-fast)',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)';
-              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)';
-              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
+              background: 'var(--ks-paper-deep)',
+              border: '1px solid var(--border-medium)',
             }}
           >
-            <Zap size={16} color="#38bdf8" />
+            <Zap size={16} color="var(--ks-kinpaku)" />
             <span>Explore as Guest / Launch Demo</span>
           </button>
         </div>
@@ -501,28 +485,28 @@ export default function LoginPage({ onLoginSuccess }) {
           alignItems: 'center',
           justifyContent: 'space-between',
           fontSize: '0.7rem',
-          color: 'var(--text-muted)',
+          color: 'var(--ks-text-muted)',
           fontFamily: 'var(--font-mono)',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-            <Shield size={13} color="var(--mint-sage)" />
+            <Shield size={13} color="var(--ks-patina)" />
             <span>TLS 1.3 ENCRYPTED</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-            <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--mint-sage)' }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+            <span className="pulse-dot pulse-dot-patina" />
             <span>BACKEND ONLINE</span>
           </div>
         </div>
       </div>
 
-      {/* RIGHT COLUMN: Interactive Data Science & Model Zoo Showcase */}
+      {/* RIGHT COLUMN: Interactive Telemetry & Model Zoo Showcase (Warm Beige Canvas) */}
       <div style={{
         flex: 1,
-        padding: '3rem 3.5rem',
+        padding: '3.25rem 3.5rem',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        background: 'radial-gradient(ellipse 70% 50% at 75% 20%, rgba(255, 255, 255, 0.03) 0%, transparent 70%), var(--bg-base)',
+        background: 'var(--ks-paper-deep)',
         position: 'relative',
         overflowY: 'auto',
       }}>
@@ -533,45 +517,29 @@ export default function LoginPage({ onLoginSuccess }) {
               <div style={{
                 fontSize: '0.72rem',
                 fontFamily: 'var(--font-mono)',
-                color: 'var(--text-muted)',
+                color: 'var(--ks-kinpaku-rich)',
                 letterSpacing: '0.1em',
                 textTransform: 'uppercase',
                 marginBottom: '0.25rem',
+                fontWeight: 700,
               }}>
                 Telemetry & Model Zoo
               </div>
               <h2 style={{
-                fontSize: '1.4rem',
+                fontSize: '1.45rem',
                 fontWeight: 700,
                 letterSpacing: '-0.02em',
-                color: '#f8fafc',
+                color: 'var(--ks-ink)',
               }}>
                 Live Machine Learning Workbench
               </h2>
             </div>
 
             <div style={{ display: 'flex', gap: '0.5rem' }}>
-              <span style={{
-                fontSize: '0.72rem',
-                fontFamily: 'var(--font-mono)',
-                padding: '0.25rem 0.6rem',
-                borderRadius: '6px',
-                background: 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid var(--border-subtle)',
-                color: 'var(--text-secondary)',
-              }}>
+              <span className="badge badge-muted">
                 150 rows × 9 cols
               </span>
-              <span style={{
-                fontSize: '0.72rem',
-                fontFamily: 'var(--font-mono)',
-                padding: '0.25rem 0.6rem',
-                borderRadius: '6px',
-                background: 'rgba(16, 185, 129, 0.1)',
-                border: '1px solid rgba(16, 185, 129, 0.25)',
-                color: 'var(--mint-sage)',
-                fontWeight: 600,
-              }}>
+              <span className="badge badge-patina">
                 ● P99: 1.18 ms
               </span>
             </div>
@@ -591,30 +559,31 @@ export default function LoginPage({ onLoginSuccess }) {
                   key={m.id}
                   onClick={() => setSelectedModel(m.id)}
                   style={{
-                    padding: '0.75rem 0.85rem',
+                    padding: '0.85rem 0.95rem',
                     borderRadius: '8px',
-                    background: isSelected ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.02)',
-                    border: `1px solid ${isSelected ? 'rgba(255, 255, 255, 0.3)' : 'var(--border-subtle)'}`,
-                    color: isSelected ? '#f8fafc' : 'var(--text-secondary)',
+                    background: isSelected ? 'var(--ks-paper-raised)' : 'rgba(255, 255, 255, 0.45)',
+                    border: `1px solid ${isSelected ? 'var(--ks-kinpaku)' : 'var(--border-subtle)'}`,
+                    color: isSelected ? 'var(--ks-ink)' : 'var(--ks-text-muted)',
                     textAlign: 'left',
                     cursor: 'pointer',
                     transition: 'all var(--transition-fast)',
+                    boxShadow: isSelected ? 'var(--ks-lift-1)' : 'none',
                   }}
                 >
                   <div style={{
                     fontSize: '0.62rem',
                     fontFamily: 'var(--font-mono)',
-                    color: isSelected ? '#38bdf8' : 'var(--text-muted)',
+                    color: isSelected ? 'var(--ks-kinpaku-deep)' : 'var(--ks-text-faint)',
                     fontWeight: 700,
                     letterSpacing: '0.04em',
-                    marginBottom: '0.2rem',
+                    marginBottom: '0.25rem',
                   }}>
                     {m.tag}
                   </div>
-                  <div style={{ fontSize: '0.82rem', fontWeight: 600, marginBottom: '0.25rem' }}>
+                  <div style={{ fontSize: '0.82rem', fontWeight: 700, marginBottom: '0.25rem' }}>
                     {m.shortName}
                   </div>
-                  <div style={{ fontSize: '0.72rem', fontFamily: 'var(--font-mono)', color: isSelected ? '#f8fafc' : 'var(--text-muted)' }}>
+                  <div style={{ fontSize: '0.72rem', fontFamily: 'var(--font-mono)', color: isSelected ? 'var(--ks-ink)' : 'var(--ks-text-muted)', fontWeight: 600 }}>
                     {m.accuracy}
                   </div>
                 </button>
@@ -626,32 +595,32 @@ export default function LoginPage({ onLoginSuccess }) {
           <div style={{
             borderRadius: '12px',
             border: '1px solid var(--border-subtle)',
-            background: 'rgba(255, 255, 255, 0.025)',
-            backdropFilter: 'blur(16px)',
+            background: 'var(--ks-paper-raised)',
             padding: '1.5rem',
             display: 'flex',
             flexDirection: 'column',
             gap: '1.25rem',
+            boxShadow: 'var(--ks-lift-1)',
           }}>
             {/* Model Card Header */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.2rem' }}>
-                  <Cpu size={16} color="#f8fafc" />
-                  <span style={{ fontSize: '1rem', fontWeight: 700, color: '#f8fafc' }}>
+                  <Cpu size={16} color="var(--ks-kinpaku)" />
+                  <span style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--ks-ink)' }}>
                     {model.name}
                   </span>
                 </div>
-                <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+                <div style={{ fontSize: '0.74rem', color: 'var(--ks-text-muted)' }}>
                   Task: {model.task}
                 </div>
               </div>
 
               <div style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: '1.15rem', fontWeight: 800, fontFamily: 'var(--font-mono)', color: '#f8fafc' }}>
+                <div style={{ fontSize: '1.15rem', fontWeight: 800, fontFamily: 'var(--font-mono)', color: 'var(--ks-ink)' }}>
                   {model.primaryMetric}
                 </div>
-                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+                <div style={{ fontSize: '0.7rem', color: 'var(--ks-patina-deep)', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
                   Latency: {model.latency}
                 </div>
               </div>
@@ -660,15 +629,15 @@ export default function LoginPage({ onLoginSuccess }) {
             {/* Dynamic Loss Convergence Curve */}
             <div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                <span style={{ fontSize: '0.72rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                <span style={{ fontSize: '0.72rem', fontFamily: 'var(--font-mono)', color: 'var(--ks-text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                   Loss Convergence & Epoch Progress
                 </span>
                 <div style={{ display: 'flex', gap: '1rem', fontSize: '0.68rem', fontFamily: 'var(--font-mono)' }}>
-                  <span style={{ color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <span style={{ width: 8, height: 2, background: '#f8fafc' }} /> Training Loss
+                  <span style={{ color: 'var(--ks-kinpaku-deep)', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 600 }}>
+                    <span style={{ width: 10, height: 3, background: 'var(--ks-kinpaku)', borderRadius: 2 }} /> Training Loss
                   </span>
-                  <span style={{ color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <span style={{ width: 8, height: 2, background: '#94a3b8', borderTop: '1px dashed' }} /> Validation
+                  <span style={{ color: 'var(--ks-patina-deep)', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 600 }}>
+                    <span style={{ width: 10, height: 2, background: 'var(--ks-patina)', borderTop: '2px dashed' }} /> Validation
                   </span>
                 </div>
               </div>
@@ -676,35 +645,45 @@ export default function LoginPage({ onLoginSuccess }) {
               <div style={{
                 height: '110px',
                 borderRadius: '8px',
-                background: 'rgba(0, 0, 0, 0.3)',
+                background: 'var(--ks-paper-deep)',
                 border: '1px solid var(--border-subtle)',
                 padding: '0.5rem 1rem',
+                boxShadow: 'var(--ks-track-recess)',
               }}>
                 <svg viewBox="0 0 400 100" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
                   {/* Grid Lines */}
-                  <line x1="10" y1="20" x2="390" y2="20" stroke="rgba(255,255,255,0.04)" strokeDasharray="3 3" />
-                  <line x1="10" y1="50" x2="390" y2="50" stroke="rgba(255,255,255,0.04)" strokeDasharray="3 3" />
-                  <line x1="10" y1="80" x2="390" y2="80" stroke="rgba(255,255,255,0.04)" strokeDasharray="3 3" />
+                  <line x1="10" y1="20" x2="390" y2="20" stroke="rgba(25, 24, 23, 0.05)" strokeDasharray="3 3" />
+                  <line x1="10" y1="50" x2="390" y2="50" stroke="rgba(25, 24, 23, 0.05)" strokeDasharray="3 3" />
+                  <line x1="10" y1="80" x2="390" y2="80" stroke="rgba(25, 24, 23, 0.05)" strokeDasharray="3 3" />
 
-                  {/* Training Loss Curve */}
+                  {/* Training Loss Curve in Kinpaku Gold */}
                   <path
                     d={model.lossCurve}
                     fill="none"
-                    stroke="#f8fafc"
-                    strokeWidth="2"
+                    stroke="var(--ks-kinpaku)"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
                   />
 
-                  {/* Validation Curve */}
+                  {/* Validation Curve in Patina Teal */}
                   <path
                     d={model.valCurve}
                     fill="none"
-                    stroke="#64748b"
-                    strokeWidth="1.5"
+                    stroke="var(--ks-patina)"
+                    strokeWidth="1.8"
                     strokeDasharray="4 2"
+                    strokeLinecap="round"
                   />
 
                   {/* Focal Convergence Point */}
-                  <circle cx="380" cy={model.id === 'gboost' ? 14 : model.id === 'rf' ? 19 : model.id === 'mlp' ? 12 : 32} r="4" fill="#f8fafc" stroke="#090a0f" strokeWidth="2" />
+                  <circle
+                    cx="380"
+                    cy={model.id === 'gboost' ? 14 : model.id === 'rf' ? 19 : model.id === 'mlp' ? 12 : 32}
+                    r="4.5"
+                    fill="var(--ks-kinpaku)"
+                    stroke="var(--ks-paper-raised)"
+                    strokeWidth="2"
+                  />
                 </svg>
               </div>
             </div>
@@ -715,28 +694,28 @@ export default function LoginPage({ onLoginSuccess }) {
               <div style={{
                 borderRadius: '8px',
                 border: '1px solid var(--border-subtle)',
-                background: 'rgba(0, 0, 0, 0.25)',
+                background: 'var(--ks-paper-deep)',
                 padding: '0.75rem',
               }}>
-                <div style={{ fontSize: '0.7rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
+                <div style={{ fontSize: '0.7rem', fontFamily: 'var(--font-mono)', color: 'var(--ks-text-muted)', marginBottom: '0.5rem', fontWeight: 600 }}>
                   CONFUSION MATRIX (N=150)
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px', textAlign: 'center', fontFamily: 'var(--font-mono)', fontSize: '0.8rem' }}>
-                  <div style={{ padding: '0.45rem', borderRadius: '4px', background: 'rgba(255, 255, 255, 0.08)', color: '#f8fafc' }}>
-                    <div style={{ fontSize: '0.92rem', fontWeight: 700 }}>{model.confusion.tp}</div>
-                    <div style={{ fontSize: '0.6rem', color: 'var(--text-muted)' }}>TP</div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '5px', textAlign: 'center', fontFamily: 'var(--font-mono)', fontSize: '0.8rem' }}>
+                  <div style={{ padding: '0.5rem', borderRadius: '5px', background: 'var(--ks-patina-pale)', border: '1px solid var(--ks-patina-border)', color: 'var(--ks-patina-deep)' }}>
+                    <div style={{ fontSize: '0.94rem', fontWeight: 800 }}>{model.confusion.tp}</div>
+                    <div style={{ fontSize: '0.62rem', fontWeight: 600, opacity: 0.85 }}>TP</div>
                   </div>
-                  <div style={{ padding: '0.45rem', borderRadius: '4px', background: 'rgba(255, 255, 255, 0.02)', color: 'var(--text-muted)' }}>
-                    <div style={{ fontSize: '0.92rem', fontWeight: 700 }}>{model.confusion.fp}</div>
-                    <div style={{ fontSize: '0.6rem', color: 'var(--text-muted)' }}>FP</div>
+                  <div style={{ padding: '0.5rem', borderRadius: '5px', background: 'var(--ks-vermilion-pale)', border: '1px solid var(--ks-vermilion-border)', color: 'var(--ks-vermilion)' }}>
+                    <div style={{ fontSize: '0.94rem', fontWeight: 800 }}>{model.confusion.fp}</div>
+                    <div style={{ fontSize: '0.62rem', fontWeight: 600, opacity: 0.85 }}>FP</div>
                   </div>
-                  <div style={{ padding: '0.45rem', borderRadius: '4px', background: 'rgba(255, 255, 255, 0.02)', color: 'var(--text-muted)' }}>
-                    <div style={{ fontSize: '0.92rem', fontWeight: 700 }}>{model.confusion.fn}</div>
-                    <div style={{ fontSize: '0.6rem', color: 'var(--text-muted)' }}>FN</div>
+                  <div style={{ padding: '0.5rem', borderRadius: '5px', background: 'var(--ks-vermilion-pale)', border: '1px solid var(--ks-vermilion-border)', color: 'var(--ks-vermilion)' }}>
+                    <div style={{ fontSize: '0.94rem', fontWeight: 800 }}>{model.confusion.fn}</div>
+                    <div style={{ fontSize: '0.62rem', fontWeight: 600, opacity: 0.85 }}>FN</div>
                   </div>
-                  <div style={{ padding: '0.45rem', borderRadius: '4px', background: 'rgba(255, 255, 255, 0.08)', color: '#f8fafc' }}>
-                    <div style={{ fontSize: '0.92rem', fontWeight: 700 }}>{model.confusion.tn}</div>
-                    <div style={{ fontSize: '0.6rem', color: 'var(--text-muted)' }}>TN</div>
+                  <div style={{ padding: '0.5rem', borderRadius: '5px', background: 'var(--ks-patina-pale)', border: '1px solid var(--ks-patina-border)', color: 'var(--ks-patina-deep)' }}>
+                    <div style={{ fontSize: '0.94rem', fontWeight: 800 }}>{model.confusion.tn}</div>
+                    <div style={{ fontSize: '0.62rem', fontWeight: 600, opacity: 0.85 }}>TN</div>
                   </div>
                 </div>
               </div>
@@ -745,20 +724,20 @@ export default function LoginPage({ onLoginSuccess }) {
               <div style={{
                 borderRadius: '8px',
                 border: '1px solid var(--border-subtle)',
-                background: 'rgba(0, 0, 0, 0.25)',
+                background: 'var(--ks-paper-deep)',
                 padding: '0.75rem',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
               }}>
-                <div style={{ fontSize: '0.7rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', marginBottom: '0.4rem' }}>
+                <div style={{ fontSize: '0.7rem', fontFamily: 'var(--font-mono)', color: 'var(--ks-text-muted)', marginBottom: '0.4rem', fontWeight: 600 }}>
                   SERIALIZED HYPERPARAMETERS
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.4rem', fontSize: '0.72rem', fontFamily: 'var(--font-mono)' }}>
                   {model.hyperparams.map((hp, i) => (
-                    <div key={i} style={{ color: 'var(--text-secondary)' }}>
-                      <span style={{ color: 'var(--text-muted)' }}>{hp.key}:</span>{' '}
-                      <span style={{ color: '#f8fafc', fontWeight: 600 }}>{hp.val}</span>
+                    <div key={i} style={{ color: 'var(--ks-text-muted)' }}>
+                      <span>{hp.key}:</span>{' '}
+                      <span style={{ color: 'var(--ks-ink)', fontWeight: 700 }}>{hp.val}</span>
                     </div>
                   ))}
                 </div>
@@ -768,23 +747,21 @@ export default function LoginPage({ onLoginSuccess }) {
                   type="button"
                   onClick={handleSimulateInference}
                   disabled={isSimulating}
+                  className="btn btn-secondary"
                   style={{
                     marginTop: '0.65rem',
                     padding: '0.45rem 0.65rem',
                     borderRadius: '6px',
-                    border: '1px solid rgba(255, 255, 255, 0.15)',
-                    background: 'rgba(255, 255, 255, 0.04)',
-                    color: '#f8fafc',
                     fontSize: '0.72rem',
                     fontFamily: 'var(--font-mono)',
-                    cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: '0.4rem',
+                    background: 'var(--ks-paper-raised)',
                   }}
                 >
-                  <Activity size={13} color="#38bdf8" />
+                  <Activity size={13} color="var(--ks-kinpaku)" />
                   <span>{isSimulating ? 'Simulating inference...' : '▶ Simulate Real-Time Inference'}</span>
                 </button>
               </div>
@@ -796,21 +773,21 @@ export default function LoginPage({ onLoginSuccess }) {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                padding: '0.6rem 0.85rem',
+                padding: '0.65rem 0.85rem',
                 borderRadius: '6px',
-                background: 'rgba(16, 185, 129, 0.1)',
-                border: '1px solid rgba(16, 185, 129, 0.25)',
+                background: 'var(--ks-patina-pale)',
+                border: '1px solid var(--ks-patina-border)',
                 fontSize: '0.78rem',
                 fontFamily: 'var(--font-mono)',
-                color: 'var(--mint-sage)',
+                color: 'var(--ks-patina-deep)',
               }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700 }}>
                   <CheckCircle2 size={15} />
                   <span>OUTPUT: {simResult.prediction}</span>
                 </div>
-                <div style={{ display: 'flex', gap: '1rem', color: '#f8fafc' }}>
+                <div style={{ display: 'flex', gap: '1rem', color: 'var(--ks-ink)', fontWeight: 600 }}>
                   <span>Confidence: {simResult.confidence}</span>
-                  <span style={{ color: 'var(--text-muted)' }}>Latency: {simResult.latency}</span>
+                  <span style={{ color: 'var(--ks-text-muted)' }}>Latency: {simResult.latency}</span>
                 </div>
               </div>
             )}
@@ -824,13 +801,13 @@ export default function LoginPage({ onLoginSuccess }) {
           alignItems: 'center',
           justifyContent: 'space-between',
           fontSize: '0.74rem',
-          color: 'var(--text-muted)',
+          color: 'var(--ks-text-muted)',
           fontFamily: 'var(--font-mono)',
         }}>
           <div>
             Active Pipeline: Leakage-Free ColumnTransformer • Scikit-Learn • FastAPI Backend
           </div>
-          <div style={{ color: '#f8fafc' }}>
+          <div style={{ color: 'var(--ks-ink)', fontWeight: 600 }}>
             Ready for Session Initialization →
           </div>
         </div>

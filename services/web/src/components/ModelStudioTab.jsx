@@ -260,8 +260,8 @@ export default function ModelStudioTab({
           </div>
 
           {/* Dynamic Hyperparameters Slider/Inputs */}
-          <div style={{ background: 'rgba(14, 20, 32, 0.6)', padding: '1rem', borderRadius: 'var(--radius-sm)' }}>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginBottom: '0.5rem' }}>
+          <div style={{ background: 'var(--ks-paper-deep)', border: '1px solid var(--border-subtle)', padding: '1rem', borderRadius: 'var(--radius-sm)' }}>
+            <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginBottom: '0.5rem', fontWeight: 600 }}>
               HYPERPARAMETER TUNING
             </div>
 
@@ -355,8 +355,8 @@ export default function ModelStudioTab({
           </div>
 
           {/* Validation & Split Strategy */}
-          <div style={{ background: 'rgba(14, 20, 32, 0.6)', padding: '1rem', borderRadius: 'var(--radius-sm)' }}>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginBottom: '0.5rem' }}>
+          <div style={{ background: 'var(--ks-paper-deep)', border: '1px solid var(--border-subtle)', padding: '1rem', borderRadius: 'var(--radius-sm)' }}>
+            <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginBottom: '0.5rem', fontWeight: 600 }}>
               SPLIT & VALIDATION STRATEGY
             </div>
 
@@ -470,14 +470,14 @@ export default function ModelStudioTab({
 
             {/* Feature Selection Assistant Results */}
             {fsResult && (
-              <div style={{ marginBottom: '0.75rem', padding: '0.75rem', background: 'rgba(0, 229, 255, 0.08)', border: '1px solid rgba(0, 229, 255, 0.25)', borderRadius: 'var(--radius-sm)' }}>
+              <div style={{ marginBottom: '0.75rem', padding: '0.75rem', background: 'var(--ks-kinpaku-pale)', border: '1px solid var(--ks-kinpaku-border)', borderRadius: 'var(--radius-sm)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                  <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--cyan-neon)' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--ks-kinpaku-deep)' }}>
                     TOP RECOMMENDED FEATURES ({fsResult.recommended_feature_count})
                   </span>
                   <button
                     type="button"
-                    className="btn btn-cyan"
+                    className="btn btn-secondary"
                     style={{ padding: '0.15rem 0.5rem', fontSize: '0.7rem' }}
                     onClick={handleApplyRecommendedFeatures}
                   >
@@ -503,7 +503,8 @@ export default function ModelStudioTab({
             <div style={{ 
               maxHeight: 140, 
               overflowY: 'auto', 
-              background: 'rgba(14, 20, 32, 0.6)', 
+              background: 'var(--ks-paper-deep)', 
+              border: '1px solid var(--border-subtle)',
               padding: '0.6rem', 
               borderRadius: 'var(--radius-sm)',
               display: 'flex',
@@ -526,8 +527,8 @@ export default function ModelStudioTab({
           </div>
 
           {/* Preprocessing Pipeline (Scalers & Imputers) */}
-          <div style={{ background: 'rgba(14, 20, 32, 0.6)', padding: '1rem', borderRadius: 'var(--radius-sm)' }}>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginBottom: '0.5rem' }}>
+          <div style={{ background: 'var(--ks-paper-deep)', border: '1px solid var(--border-subtle)', padding: '1rem', borderRadius: 'var(--radius-sm)' }}>
+            <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginBottom: '0.5rem', fontWeight: 600 }}>
               TRANSFORMATION & IMPUTATION PIPELINE
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
@@ -613,13 +614,13 @@ export default function ModelStudioTab({
           ) : (
             <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
               {/* Run Identification Card */}
-              <div style={{ background: 'rgba(14, 20, 32, 0.8)', padding: '1rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
+              <div style={{ background: 'var(--ks-paper-deep)', padding: '1rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-                      RUN ID: <code style={{ color: 'var(--cyan-neon)' }}>{trainResult.id}</code>
+                    <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+                      RUN ID: <code style={{ color: 'var(--ks-kinpaku-rich)', fontWeight: 600 }}>{trainResult.id}</code>
                     </div>
-                    <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)', marginTop: '0.2rem' }}>
+                    <div style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-primary)', marginTop: '0.2rem' }}>
                       {trainResult.model_name?.toUpperCase()}
                     </div>
                   </div>
@@ -631,21 +632,21 @@ export default function ModelStudioTab({
 
               {/* Evaluation Metrics Grid */}
               <div>
-                <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                   Validation Metrics
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.75rem' }}>
                   {Object.entries(trainResult.metrics || {})
                     .filter(([k, v]) => typeof v === 'number' && !['feature_importance', 'confusion_matrix', 'cross_validation'].includes(k))
                     .map(([metricKey, metricVal]) => (
-                      <div key={metricKey} style={{ background: 'rgba(14, 20, 32, 0.7)', padding: '0.85rem', borderRadius: 'var(--radius-sm)' }}>
+                      <div key={metricKey} style={{ background: 'var(--ks-paper-deep)', border: '1px solid var(--border-subtle)', padding: '0.85rem', borderRadius: 'var(--radius-sm)' }}>
                         <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', textTransform: 'uppercase' }}>
                           {metricKey.replace('_', ' ')}
                         </div>
                         <div style={{ 
                           fontSize: '1.35rem', 
-                          fontWeight: 700, 
-                          color: metricKey.includes('r2') || metricKey.includes('accuracy') || metricKey.includes('f1') ? 'var(--cyan-neon)' : 'var(--text-primary)', 
+                          fontWeight: 800, 
+                          color: metricKey.includes('r2') || metricKey.includes('accuracy') || metricKey.includes('f1') ? 'var(--ks-kinpaku-rich)' : 'var(--text-primary)', 
                           fontFamily: 'var(--font-mono)',
                           marginTop: '0.2rem' 
                         }}>
@@ -658,9 +659,9 @@ export default function ModelStudioTab({
 
               {/* Permutation Feature Importance Section */}
               {Array.isArray(trainResult.metrics?.feature_importance) && trainResult.metrics.feature_importance.length > 0 && (
-                <div style={{ background: 'rgba(14, 20, 32, 0.8)', padding: '1.25rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
+                <div style={{ background: 'var(--ks-paper-deep)', padding: '1.25rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.85rem' }}>
-                    <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--cyan-neon)', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                    <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--ks-kinpaku-rich)', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                       <Sparkles size={14} />
                       Permutation Feature Importance (Explainability)
                     </div>
@@ -680,16 +681,16 @@ export default function ModelStudioTab({
                               <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, color: 'var(--text-primary)' }}>
                                 #{i + 1} {f.feature}
                               </span>
-                              <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--cyan-neon)', fontSize: '0.75rem' }}>
+                              <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--ks-kinpaku-deep)', fontSize: '0.75rem', fontWeight: 600 }}>
                                 Δ {f.importance.toFixed(4)} (±{f.std?.toFixed(4)})
                               </span>
                             </div>
-                            <div style={{ background: 'rgba(255,255,255,0.06)', height: '6px', borderRadius: '3px', overflow: 'hidden' }}>
+                            <div style={{ background: 'var(--ks-gray)', height: '6px', borderRadius: '3px', overflow: 'hidden' }}>
                               <div
                                 style={{
                                   width: `${pct}%`,
                                   height: '100%',
-                                  background: i === 0 ? 'var(--orange-racing)' : 'var(--cyan-neon)',
+                                  background: i === 0 ? 'var(--ks-kinpaku)' : 'var(--ks-patina)',
                                   borderRadius: '3px',
                                   transition: 'width 0.4s ease',
                                 }}

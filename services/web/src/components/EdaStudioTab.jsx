@@ -190,11 +190,11 @@ export default function EdaStudioTab({ activeDataset }) {
       {
         label: `Frequency of ${selectedHistCol}`,
         data: histCounts,
-        backgroundColor: 'rgba(245, 158, 11, 0.75)',
-        borderColor: '#f59e0b',
+        backgroundColor: 'rgba(197, 139, 36, 0.75)',
+        borderColor: '#c58b24',
         borderWidth: 1,
         borderRadius: 4,
-        hoverBackgroundColor: 'rgba(249, 115, 22, 0.9)',
+        hoverBackgroundColor: '#c58b24',
       },
     ],
   };
@@ -205,36 +205,38 @@ export default function EdaStudioTab({ activeDataset }) {
     plugins: {
       legend: { display: false },
       tooltip: {
-        backgroundColor: 'rgba(22, 24, 30, 0.95)',
-        titleColor: '#f59e0b',
-        bodyColor: '#fdfbf7',
-        borderColor: 'rgba(245, 158, 11, 0.35)',
+        backgroundColor: '#ffffff',
+        titleColor: '#191817',
+        bodyColor: '#2c2927',
+        borderColor: 'rgba(25, 24, 23, 0.16)',
         borderWidth: 1,
+        padding: 10,
+        boxShadow: '0 4px 12px rgba(25, 24, 23, 0.1)',
       },
     },
     scales: {
       x: {
-        grid: { color: 'rgba(255, 255, 255, 0.05)' },
-        ticks: { color: '#8c9ba5', font: { family: 'JetBrains Mono', size: 10 } },
+        grid: { color: 'rgba(25, 24, 23, 0.05)' },
+        ticks: { color: '#68635c', font: { family: 'JetBrains Mono', size: 10 } },
       },
       y: {
-        grid: { color: 'rgba(255, 255, 255, 0.05)' },
-        ticks: { color: '#8c9ba5', font: { family: 'JetBrains Mono', size: 10 } },
+        grid: { color: 'rgba(25, 24, 23, 0.05)' },
+        ticks: { color: '#68635c', font: { family: 'JetBrains Mono', size: 10 } },
       },
     },
   };
 
-  // Helper for correlation color scale
+  // Helper for correlation color scale in light kinpaku palette
   const getCorrStyle = (val) => {
     if (val === null || val === undefined || isNaN(val)) {
-      return { background: 'rgba(255, 255, 255, 0.03)', color: 'var(--text-muted)' };
+      return { background: 'var(--ks-paper-deep)', color: 'var(--text-muted)' };
     }
     const r = Math.min(1, Math.max(-1, val));
-    if (r > 0.8) return { background: 'rgba(245, 158, 11, 0.35)', color: 'var(--amber-gold)', fontWeight: 700 };
-    if (r > 0.4) return { background: 'rgba(245, 158, 11, 0.15)', color: 'var(--peach-warm)' };
-    if (r < -0.8) return { background: 'rgba(249, 115, 22, 0.35)', color: 'var(--terracotta-orange)', fontWeight: 700 };
-    if (r < -0.4) return { background: 'rgba(249, 115, 22, 0.15)', color: '#fed7aa' };
-    return { background: 'rgba(255, 255, 255, 0.02)', color: 'var(--text-secondary)' };
+    if (r > 0.7) return { background: '#fef3c7', color: '#854d0e', fontWeight: 700 };
+    if (r > 0.3) return { background: '#fef9c3', color: '#a16207', fontWeight: 600 };
+    if (r < -0.7) return { background: '#ffedd5', color: '#9a3412', fontWeight: 700 };
+    if (r < -0.3) return { background: '#fff7ed', color: '#c2410c', fontWeight: 600 };
+    return { background: 'var(--ks-paper-deep)', color: 'var(--text-secondary)' };
   };
 
   return (
@@ -425,23 +427,23 @@ export default function EdaStudioTab({ activeDataset }) {
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
-            <div style={{ background: 'rgba(14, 20, 32, 0.6)', padding: '1rem', borderRadius: 'var(--radius-sm)' }}>
+            <div style={{ background: 'var(--ks-paper-deep)', border: '1px solid var(--border-subtle)', padding: '1rem', borderRadius: 'var(--radius-sm)' }}>
               <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
                 INFERRED CADENCE / FREQUENCY
               </div>
-              <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--cyan-neon)', fontFamily: 'var(--font-display)', marginTop: '0.2rem' }}>
+              <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--ks-ink)', fontFamily: 'var(--font-display)', marginTop: '0.2rem' }}>
                 {timeSeriesData.inferred_frequency || 'Regular / Hourly (1h)'}
               </div>
             </div>
 
-            <div style={{ background: 'rgba(14, 20, 32, 0.6)', padding: '1rem', borderRadius: 'var(--radius-sm)' }}>
+            <div style={{ background: 'var(--ks-paper-deep)', border: '1px solid var(--border-subtle)', padding: '1rem', borderRadius: 'var(--radius-sm)' }}>
               <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
                 TEMPORAL GAPS DETECTED
               </div>
               <div style={{ 
                 fontSize: '1.5rem', 
                 fontWeight: 800, 
-                color: (timeSeriesData.gap_count || 0) > 0 ? 'var(--amber-warn)' : 'var(--emerald-pulse)', 
+                color: (timeSeriesData.gap_count || 0) > 0 ? 'var(--ks-vermilion)' : 'var(--ks-patina)', 
                 fontFamily: 'var(--font-display)', 
                 marginTop: '0.2rem' 
               }}>
@@ -449,7 +451,7 @@ export default function EdaStudioTab({ activeDataset }) {
               </div>
             </div>
 
-            <div style={{ background: 'rgba(14, 20, 32, 0.6)', padding: '1rem', borderRadius: 'var(--radius-sm)' }}>
+            <div style={{ background: 'var(--ks-paper-deep)', border: '1px solid var(--border-subtle)', padding: '1rem', borderRadius: 'var(--radius-sm)' }}>
               <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
                 SAMPLE TIME WINDOW
               </div>
@@ -573,7 +575,7 @@ export default function EdaStudioTab({ activeDataset }) {
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem' }}>
             {/* ADF Card */}
-            <div style={{ background: 'rgba(14, 20, 32, 0.6)', padding: '1.2rem', borderRadius: 'var(--radius-sm)' }}>
+            <div style={{ background: 'var(--ks-paper-deep)', border: '1px solid var(--border-subtle)', padding: '1.2rem', borderRadius: 'var(--radius-sm)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 700 }}>AUGMENTED DICKEY-FULLER (ADF)</span>
                 <span className={`badge ${stationarityData.adf_test.is_stationary ? 'badge-emerald' : 'badge-rose'}`}>
@@ -581,8 +583,8 @@ export default function EdaStudioTab({ activeDataset }) {
                 </span>
               </div>
               <div style={{ marginTop: '0.75rem', fontFamily: 'var(--font-mono)', fontSize: '0.85rem' }}>
-                <div>ADF Statistic: <span style={{ color: 'var(--cyan-neon)' }}>{stationarityData.adf_test.statistic ?? 'N/A'}</span></div>
-                <div>p-value: <span style={{ color: 'var(--cyan-neon)' }}>{stationarityData.adf_test.p_value ?? 'N/A'}</span></div>
+                <div>ADF Statistic: <span style={{ color: 'var(--ks-ink)', fontWeight: 700 }}>{stationarityData.adf_test.statistic ?? 'N/A'}</span></div>
+                <div>p-value: <span style={{ color: 'var(--ks-patina-deep)', fontWeight: 700 }}>{stationarityData.adf_test.p_value ?? 'N/A'}</span></div>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.4rem' }}>
                   Critical (5%): {stationarityData.adf_test.critical_values?.['5%'] ?? 'N/A'}
                 </div>
@@ -590,7 +592,7 @@ export default function EdaStudioTab({ activeDataset }) {
             </div>
 
             {/* KPSS Card */}
-            <div style={{ background: 'rgba(14, 20, 32, 0.6)', padding: '1.2rem', borderRadius: 'var(--radius-sm)' }}>
+            <div style={{ background: 'var(--ks-paper-deep)', border: '1px solid var(--border-subtle)', padding: '1.2rem', borderRadius: 'var(--radius-sm)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 700 }}>KPSS TEST</span>
                 <span className={`badge ${stationarityData.kpss_test.is_stationary ? 'badge-emerald' : 'badge-rose'}`}>
@@ -598,8 +600,8 @@ export default function EdaStudioTab({ activeDataset }) {
                 </span>
               </div>
               <div style={{ marginTop: '0.75rem', fontFamily: 'var(--font-mono)', fontSize: '0.85rem' }}>
-                <div>KPSS Statistic: <span style={{ color: 'var(--cyan-neon)' }}>{stationarityData.kpss_test.statistic ?? 'N/A'}</span></div>
-                <div>p-value: <span style={{ color: 'var(--cyan-neon)' }}>{stationarityData.kpss_test.p_value ?? 'N/A'}</span></div>
+                <div>KPSS Statistic: <span style={{ color: 'var(--ks-ink)', fontWeight: 700 }}>{stationarityData.kpss_test.statistic ?? 'N/A'}</span></div>
+                <div>p-value: <span style={{ color: 'var(--ks-patina-deep)', fontWeight: 700 }}>{stationarityData.kpss_test.p_value ?? 'N/A'}</span></div>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.4rem' }}>
                   Critical (5%): {stationarityData.kpss_test.critical_values?.['5%'] ?? 'N/A'}
                 </div>
@@ -710,9 +712,9 @@ export default function EdaStudioTab({ activeDataset }) {
         )}
 
         {hypoResult && (
-          <div style={{ marginTop: '1.25rem', padding: '1.2rem', background: 'rgba(14, 20, 32, 0.7)', border: '1px solid rgba(0, 229, 255, 0.3)', borderRadius: 'var(--radius-sm)' }}>
+          <div style={{ marginTop: '1.25rem', padding: '1.2rem', background: 'var(--ks-paper-deep)', border: '1px solid var(--border-medium)', borderRadius: 'var(--radius-sm)' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-              <div style={{ fontWeight: 700, color: 'var(--cyan-neon)', fontSize: '1rem' }}>
+              <div style={{ fontWeight: 700, color: 'var(--ks-ink)', fontSize: '1rem' }}>
                 {hypoResult.test_name}
               </div>
               <span className={`badge ${hypoResult.significant ? 'badge-rose' : 'badge-emerald'}`}>
@@ -721,8 +723,8 @@ export default function EdaStudioTab({ activeDataset }) {
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.75rem', fontFamily: 'var(--font-mono)', fontSize: '0.85rem', marginBottom: '0.75rem' }}>
-              <div>Statistic: <strong style={{ color: 'var(--cyan-neon)' }}>{hypoResult.statistic ?? 'N/A'}</strong></div>
-              <div>p-value: <strong style={{ color: 'var(--cyan-neon)' }}>{hypoResult.p_value ?? 'N/A'}</strong></div>
+              <div>Statistic: <strong style={{ color: 'var(--ks-ink)' }}>{hypoResult.statistic ?? 'N/A'}</strong></div>
+              <div>p-value: <strong style={{ color: 'var(--ks-patina-deep)' }}>{hypoResult.p_value ?? 'N/A'}</strong></div>
               {hypoResult.cramers_v !== undefined && <div>Cramér's V: <strong>{hypoResult.cramers_v}</strong></div>}
               {hypoResult.degrees_of_freedom !== undefined && <div>DOF: <strong>{hypoResult.degrees_of_freedom}</strong></div>}
             </div>

@@ -226,10 +226,10 @@ export default function App() {
           fontSize: '0.72rem',
           color: 'var(--text-muted)',
           fontFamily: 'var(--font-mono)',
-          background: 'rgba(9, 10, 15, 0.95)',
+          background: 'var(--bg-sidebar)',
         }}>
           <div>
-            <span>AXIS ML • ENTERPRISE DATA SCIENCE & AI WORKBENCH</span>
+            <span>AXIS ML • DATA SCIENCE & INTELLIGENCE WORKBENCH</span>
           </div>
           <div style={{ display: 'flex', gap: '1.5rem' }}>
             <span>BACKEND: FASTAPI :8002</span>

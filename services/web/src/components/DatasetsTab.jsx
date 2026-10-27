@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 
 export default function DatasetsTab({ 
-  datasets, 
+  datasets = [], 
   activeDataset, 
   setActiveDatasetId, 
   onRefreshDatasets,
@@ -78,60 +78,61 @@ export default function DatasetsTab({
       setFile(null);
       setDatasetName('');
       setDescription('');
-      await onRefreshDatasets();
-      setActiveDatasetId(res.id);
+      if (onRefreshDatasets) onRefreshDatasets();
+      if (res.id) setActiveDatasetId(res.id);
     } catch (err) {
-      setUploadError(err.message || 'Failed to upload dataset.');
+      setUploadError(err.message || 'Dataset upload failed. Ensure CSV is properly formatted.');
     } finally {
       setUploading(false);
     }
   };
 
-  const totalRows = datasets.reduce((acc, d) => acc + (d.rows ?? d.row_count ?? 0), 0);
-  const totalCols = datasets.reduce((acc, d) => acc + (d.columns ?? d.column_count ?? 0), 0);
+  const totalRows = datasets.reduce((acc, curr) => acc + (curr.rows ?? curr.row_count ?? 0), 0);
+  const totalCols = datasets.reduce((acc, curr) => acc + (curr.columns ?? curr.column_count ?? 0), 0);
 
   return (
-    <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
-      {/* Sleek Minimalist Dataset Overview Banner */}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+      {/* Top Header Banner */}
       <div style={{
-        borderRadius: '12px',
+        borderRadius: '10px',
         border: '1px solid var(--border-subtle)',
-        background: 'linear-gradient(135deg, rgba(17, 20, 28, 0.95), rgba(9, 10, 15, 0.98))',
+        background: 'var(--ks-paper-raised)',
         padding: '1.75rem 2rem',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        flexWrap: 'wrap',
-        gap: '1.5rem',
+        boxShadow: 'var(--ks-lift-1)',
       }}>
-        <div style={{ maxWidth: '640px' }}>
+        <div>
           <div style={{
-            fontSize: '0.68rem',
-            letterSpacing: '0.12em',
-            textTransform: 'uppercase',
-            color: 'var(--text-muted)',
-            fontFamily: 'var(--font-mono)',
-            marginBottom: '0.35rem',
-            display: 'flex',
+            display: 'inline-flex',
             alignItems: 'center',
-            gap: '0.5rem',
+            gap: '0.4rem',
+            padding: '0.2rem 0.55rem',
+            borderRadius: '4px',
+            background: 'var(--ks-paper-deep)',
+            fontSize: '0.68rem',
+            fontFamily: 'var(--font-mono)',
+            color: 'var(--ks-kinpaku-rich)',
+            marginBottom: '0.5rem',
+            fontWeight: 700,
           }}>
-            <Database size={13} color="#f8fafc" />
+            <Database size={13} />
             <span>DATA LAKE REPOSITORY & INGESTION HUB</span>
           </div>
           <h2 style={{
             fontSize: '1.65rem',
             fontWeight: 800,
-            letterSpacing: '-0.02em',
-            color: '#f8fafc',
+            letterSpacing: '-0.025em',
+            color: 'var(--ks-ink)',
             fontFamily: 'var(--font-display)',
-            marginBottom: '0.4rem',
+            marginBottom: '0.35rem',
           }}>
             Dataset Registry & Schema Profiler
           </h2>
           <p style={{
             fontSize: '0.86rem',
-            color: 'var(--text-secondary)',
+            color: 'var(--ks-text-muted)',
             lineHeight: 1.5,
           }}>
             Ingest structured tabular datasets, perform automated statistical profiling, and feed clean feature representations into training pipelines.
@@ -142,7 +143,7 @@ export default function DatasetsTab({
           <button
             className="btn btn-secondary"
             onClick={onRefreshDatasets}
-            style={{ fontSize: '0.8rem', padding: '0.5rem 1rem' }}
+            style={{ fontSize: '0.82rem', padding: '0.55rem 1rem' }}
           >
             Refresh Catalog
           </button>
@@ -150,7 +151,7 @@ export default function DatasetsTab({
             <button
               className="btn btn-primary"
               onClick={() => onNavigateTab('datalab')}
-              style={{ fontSize: '0.8rem', padding: '0.5rem 1rem' }}
+              style={{ fontSize: '0.82rem', padding: '0.55rem 1.15rem' }}
             >
               <span>Explore Active in Data Lab</span>
               <ArrowRight size={14} />
@@ -161,38 +162,38 @@ export default function DatasetsTab({
 
       {/* Top Metric Counter Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
-        <div className="glass-panel" style={{ padding: '1.25rem', border: '1px solid var(--border-subtle)' }}>
-          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', letterSpacing: '0.06em' }}>
+        <div className="glass-panel" style={{ padding: '1.35rem' }}>
+          <div style={{ fontSize: '0.72rem', color: 'var(--ks-text-muted)', fontFamily: 'var(--font-mono)', letterSpacing: '0.06em', fontWeight: 600 }}>
             REGISTERED DATASETS
           </div>
-          <div style={{ fontSize: '2rem', fontWeight: 800, color: '#f8fafc', fontFamily: 'var(--font-mono)', marginTop: '0.25rem' }}>
+          <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--ks-ink)', fontFamily: 'var(--font-mono)', marginTop: '0.25rem' }}>
             {datasets.length}
           </div>
-          <div style={{ fontSize: '0.74rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
+          <div style={{ fontSize: '0.74rem', color: 'var(--ks-text-muted)', marginTop: '0.25rem' }}>
             Active across platform catalog
           </div>
         </div>
 
-        <div className="glass-panel" style={{ padding: '1.25rem', border: '1px solid var(--border-subtle)' }}>
-          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', letterSpacing: '0.06em' }}>
+        <div className="glass-panel" style={{ padding: '1.35rem' }}>
+          <div style={{ fontSize: '0.72rem', color: 'var(--ks-text-muted)', fontFamily: 'var(--font-mono)', letterSpacing: '0.06em', fontWeight: 600 }}>
             TOTAL PROFILED ROWS
           </div>
-          <div style={{ fontSize: '2rem', fontWeight: 800, color: '#f8fafc', fontFamily: 'var(--font-mono)', marginTop: '0.25rem' }}>
+          <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--ks-ink)', fontFamily: 'var(--font-mono)', marginTop: '0.25rem' }}>
             {totalRows.toLocaleString()}
           </div>
-          <div style={{ fontSize: '0.74rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
+          <div style={{ fontSize: '0.74rem', color: 'var(--ks-text-muted)', marginTop: '0.25rem' }}>
             Across all ingested datasets
           </div>
         </div>
 
-        <div className="glass-panel" style={{ padding: '1.25rem', border: '1px solid var(--border-subtle)' }}>
-          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', letterSpacing: '0.06em' }}>
+        <div className="glass-panel" style={{ padding: '1.35rem' }}>
+          <div style={{ fontSize: '0.72rem', color: 'var(--ks-text-muted)', fontFamily: 'var(--font-mono)', letterSpacing: '0.06em', fontWeight: 600 }}>
             FEATURE DIMENSIONS
           </div>
-          <div style={{ fontSize: '2rem', fontWeight: 800, color: '#f8fafc', fontFamily: 'var(--font-mono)', marginTop: '0.25rem' }}>
+          <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--ks-ink)', fontFamily: 'var(--font-mono)', marginTop: '0.25rem' }}>
             {totalCols.toLocaleString()}
           </div>
-          <div style={{ fontSize: '0.74rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
+          <div style={{ fontSize: '0.74rem', color: 'var(--ks-text-muted)', marginTop: '0.25rem' }}>
             Categorical, numeric & temporal
           </div>
         </div>
@@ -201,10 +202,10 @@ export default function DatasetsTab({
       {/* Main Grid: Upload Section & Dataset Catalog */}
       <div style={{ display: 'grid', gridTemplateColumns: 'minmax(320px, 380px) 1fr', gap: '1.5rem', alignItems: 'start' }}>
         {/* Upload Form */}
-        <div className="glass-panel" style={{ padding: '1.5rem', border: '1px solid var(--border-subtle)' }}>
+        <div className="glass-panel" style={{ padding: '1.5rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.25rem' }}>
-            <Upload size={18} color="#f8fafc" />
-            <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#f8fafc' }}>Ingest CSV Dataset</h3>
+            <Upload size={18} color="var(--ks-kinpaku)" />
+            <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--ks-ink)' }}>Ingest CSV Dataset</h3>
           </div>
 
           <form onSubmit={handleUpload} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -215,11 +216,11 @@ export default function DatasetsTab({
               onDragOver={handleDrag}
               onDrop={handleDrop}
               style={{
-                border: `1px dashed ${dragActive ? '#f8fafc' : 'rgba(255, 255, 255, 0.15)'}`,
+                border: `1px dashed ${dragActive ? 'var(--ks-kinpaku)' : 'var(--ks-gray-2)'}`,
                 borderRadius: '8px',
                 padding: '1.75rem 1rem',
                 textAlign: 'center',
-                background: dragActive ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.25)',
+                background: dragActive ? 'var(--ks-kinpaku-pale)' : 'var(--ks-paper-deep)',
                 cursor: 'pointer',
                 transition: 'all var(--transition-fast)',
               }}
@@ -232,17 +233,17 @@ export default function DatasetsTab({
                 style={{ display: 'none' }}
                 onChange={handleFileChange}
               />
-              <FileText size={28} color={file ? '#f8fafc' : 'var(--text-muted)'} style={{ margin: '0 auto 0.5rem auto' }} />
-              <div style={{ fontSize: '0.85rem', fontWeight: 600, color: file ? '#f8fafc' : 'var(--text-primary)' }}>
+              <FileText size={28} color={file ? 'var(--ks-kinpaku)' : 'var(--ks-text-faint)'} style={{ margin: '0 auto 0.5rem auto' }} />
+              <div style={{ fontSize: '0.85rem', fontWeight: 600, color: file ? 'var(--ks-ink)' : 'var(--ks-text-muted)' }}>
                 {file ? file.name : 'Click or drag CSV here to upload'}
               </div>
-              <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
+              <div style={{ fontSize: '0.74rem', color: 'var(--ks-text-faint)', marginTop: '0.25rem' }}>
                 {file ? `${(file.size / 1024).toFixed(1)} KB` : 'Tabular CSV format • UTF-8 encoding'}
               </div>
             </div>
 
             <div>
-              <label className="form-label" style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>Dataset Name</label>
+              <label className="form-label">Dataset Name</label>
               <input
                 type="text"
                 className="form-input"
@@ -253,7 +254,7 @@ export default function DatasetsTab({
             </div>
 
             <div>
-              <label className="form-label" style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>Description (Optional)</label>
+              <label className="form-label">Description (Optional)</label>
               <textarea
                 className="form-input"
                 rows={2}
@@ -265,14 +266,14 @@ export default function DatasetsTab({
             </div>
 
             {uploadError && (
-              <div className="badge badge-rose" style={{ padding: '0.5rem', width: '100%', justifyContent: 'flex-start' }}>
+              <div className="badge badge-vermilion" style={{ padding: '0.5rem', width: '100%', justifyContent: 'flex-start' }}>
                 <AlertCircle size={14} />
                 <span>{uploadError}</span>
               </div>
             )}
 
             {uploadSuccess && (
-              <div className="badge badge-emerald" style={{ padding: '0.5rem', width: '100%', justifyContent: 'flex-start' }}>
+              <div className="badge badge-patina" style={{ padding: '0.5rem', width: '100%', justifyContent: 'flex-start' }}>
                 <CheckCircle size={14} />
                 <span>{uploadSuccess}</span>
               </div>
@@ -286,7 +287,7 @@ export default function DatasetsTab({
             >
               {uploading ? (
                 <>
-                  <span className="pulse-dot" />
+                  <span className="pulse-dot pulse-dot-patina" />
                   <span>Profiling & Ingesting...</span>
                 </>
               ) : (
@@ -303,17 +304,17 @@ export default function DatasetsTab({
         <div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-              <Database size={18} color="#f8fafc" />
-              <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#f8fafc' }}>Platform Dataset Catalog</h3>
+              <Database size={18} color="var(--ks-kinpaku)" />
+              <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--ks-ink)' }}>Platform Dataset Catalog</h3>
             </div>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+            <span style={{ fontSize: '0.75rem', color: 'var(--ks-text-muted)', fontFamily: 'var(--font-mono)' }}>
               {datasets.length} Total
             </span>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {datasets.length === 0 ? (
-              <div className="glass-panel" style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+              <div className="glass-panel" style={{ padding: '3rem', textAlign: 'center', color: 'var(--ks-text-muted)' }}>
                 <Database size={40} style={{ opacity: 0.3, margin: '0 auto 1rem auto' }} />
                 <p>No datasets registered yet. Upload a CSV file to begin analysis.</p>
               </div>
@@ -325,12 +326,12 @@ export default function DatasetsTab({
                 return (
                   <div
                     key={d.id}
-                    className={`glass-panel ${isSelected ? '' : 'glass-panel-interactive'}`}
+                    className="glass-panel"
                     style={{
                       padding: '1.25rem 1.5rem',
-                      borderLeft: isSelected ? '3px solid #f8fafc' : '1px solid var(--border-subtle)',
-                      background: isSelected ? 'rgba(255, 255, 255, 0.05)' : 'var(--bg-card)',
-                      boxShadow: 'var(--shadow-card)',
+                      borderLeft: isSelected ? '4px solid var(--ks-kinpaku)' : '1px solid var(--border-subtle)',
+                      background: isSelected ? 'var(--ks-kinpaku-pale)' : 'var(--ks-paper-raised)',
+                      boxShadow: 'var(--ks-lift-1)',
                       borderRadius: '8px',
                       transition: 'all var(--transition-fast)',
                     }}
@@ -338,7 +339,7 @@ export default function DatasetsTab({
                     <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem' }}>
                       <div style={{ flex: 1 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
-                          <span style={{ fontSize: '1.05rem', fontWeight: 700, color: '#f8fafc' }}>
+                          <span style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--ks-ink)' }}>
                             {d.name}
                           </span>
                           {isDerived ? (
@@ -346,23 +347,23 @@ export default function DatasetsTab({
                               <GitFork size={10} /> CLEANED VERSION
                             </span>
                           ) : (
-                            <span className="badge badge-cyan" style={{ fontSize: '0.65rem' }}>
+                            <span className="badge badge-patina" style={{ fontSize: '0.65rem' }}>
                               ORIGINAL SOURCE
                             </span>
                           )}
                           {isSelected && (
-                            <span className="badge badge-emerald" style={{ fontSize: '0.65rem' }}>
+                            <span className="badge badge-gold" style={{ fontSize: '0.65rem' }}>
                               <CheckCircle size={10} /> ACTIVE
                             </span>
                           )}
                         </div>
 
-                        <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginTop: '0.2rem' }}>
+                        <div style={{ fontSize: '0.78rem', color: 'var(--ks-text-muted)', fontFamily: 'var(--font-mono)', marginTop: '0.2rem' }}>
                           File: {d.filename}
                         </div>
 
                         {d.description && (
-                          <div style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', marginTop: '0.4rem', lineHeight: 1.4 }}>
+                          <div style={{ fontSize: '0.84rem', color: 'var(--ks-text-muted)', marginTop: '0.4rem', lineHeight: 1.45 }}>
                             {d.description}
                           </div>
                         )}
@@ -373,16 +374,16 @@ export default function DatasetsTab({
                           alignItems: 'center', 
                           gap: '1.25rem', 
                           marginTop: '0.75rem', 
-                          color: 'var(--text-muted)',
+                          color: 'var(--ks-text-muted)',
                           fontSize: '0.78rem',
                           fontFamily: 'var(--font-mono)'
                         }}>
                           <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                            <Layers size={13} color="#94a3b8" />
-                            <strong style={{ color: '#f8fafc' }}>{d.rows ?? d.row_count ?? 0}</strong> rows × <strong style={{ color: '#f8fafc' }}>{d.columns ?? d.column_count ?? 0}</strong> cols
+                            <Layers size={13} color="var(--ks-kinpaku-rich)" />
+                            <strong style={{ color: 'var(--ks-ink)' }}>{d.rows ?? d.row_count ?? 0}</strong> rows × <strong style={{ color: 'var(--ks-ink)' }}>{d.columns ?? d.column_count ?? 0}</strong> cols
                           </span>
                           <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                            <HardDrive size={13} color="#94a3b8" />
+                            <HardDrive size={13} color="var(--ks-kinpaku-rich)" />
                             {(d.bytes ?? d.file_size_bytes) ? `${((d.bytes ?? d.file_size_bytes) / 1024).toFixed(1)} KB` : 'N/A'}
                           </span>
                           <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>

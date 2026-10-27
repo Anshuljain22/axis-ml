@@ -60,18 +60,18 @@ export default function Sidebar({
           width: 34,
           height: 34,
           borderRadius: '8px',
-          background: '#f8fafc',
+          background: 'var(--ks-ink)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           flexShrink: 0,
-          boxShadow: '0 0 16px rgba(255, 255, 255, 0.12)',
+          boxShadow: 'var(--ks-lift-1)',
         }}>
           <div style={{
             width: 12,
             height: 12,
             borderRadius: '2px',
-            background: '#090a0f',
+            background: 'var(--ks-kinpaku)',
             transform: 'rotate(45deg)',
           }} />
         </div>
@@ -80,7 +80,7 @@ export default function Sidebar({
             fontSize: '1.15rem',
             fontWeight: 800,
             fontFamily: 'var(--font-display)',
-            color: '#f8fafc',
+            color: 'var(--ks-ink)',
             letterSpacing: '-0.02em',
             lineHeight: 1.1,
           }}>
@@ -89,7 +89,7 @@ export default function Sidebar({
           <div style={{
             fontSize: '0.62rem',
             fontFamily: 'var(--font-mono)',
-            color: 'var(--text-muted)',
+            color: 'var(--ks-text-muted)',
             textTransform: 'uppercase',
             letterSpacing: '0.08em',
             marginTop: '2px',
@@ -114,29 +114,30 @@ export default function Sidebar({
                 gap: '0.75rem',
                 padding: '0.65rem 0.85rem',
                 borderRadius: '8px',
-                border: isActive ? '1px solid rgba(255, 255, 255, 0.2)' : '1px solid transparent',
+                border: isActive ? '1px solid var(--border-medium)' : '1px solid transparent',
                 background: isActive
-                  ? 'rgba(255, 255, 255, 0.08)'
+                  ? 'var(--ks-paper-raised)'
                   : 'transparent',
-                color: isActive ? '#f8fafc' : 'var(--text-secondary)',
-                fontWeight: isActive ? 600 : 500,
+                color: isActive ? 'var(--ks-ink)' : 'var(--ks-text-muted)',
+                fontWeight: isActive ? 700 : 500,
                 fontSize: '0.86rem',
                 fontFamily: 'var(--font-sans)',
                 cursor: 'pointer',
                 textAlign: 'left',
                 transition: 'all var(--transition-fast)',
                 position: 'relative',
+                boxShadow: isActive ? 'var(--ks-cap-lift)' : 'none',
               }}
               onMouseEnter={(e) => {
                 if (!isActive) {
-                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)';
-                  e.currentTarget.style.color = '#f8fafc';
+                  e.currentTarget.style.background = 'var(--ks-paper-raised)';
+                  e.currentTarget.style.color = 'var(--ks-ink)';
                 }
               }}
               onMouseLeave={(e) => {
                 if (!isActive) {
                   e.currentTarget.style.background = 'transparent';
-                  e.currentTarget.style.color = 'var(--text-secondary)';
+                  e.currentTarget.style.color = 'var(--ks-text-muted)';
                 }
               }}
             >
@@ -148,12 +149,12 @@ export default function Sidebar({
                   bottom: '25%',
                   width: '3px',
                   borderRadius: '0 3px 3px 0',
-                  background: '#f8fafc',
+                  background: 'var(--ks-kinpaku)',
                 }} />
               )}
               <Icon
                 size={17}
-                color={isActive ? '#f8fafc' : 'var(--text-muted)'}
+                color={isActive ? 'var(--ks-kinpaku-rich)' : 'var(--ks-text-faint)'}
                 style={{ flexShrink: 0 }}
               />
               <span style={{ flex: 1 }}>{item.label}</span>
@@ -163,8 +164,9 @@ export default function Sidebar({
                   fontFamily: 'var(--font-mono)',
                   padding: '0.15rem 0.45rem',
                   borderRadius: '10px',
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  color: '#f8fafc',
+                  background: 'var(--ks-kinpaku-pale)',
+                  border: '1px solid var(--ks-kinpaku-border)',
+                  color: 'var(--ks-kinpaku-deep)',
                   fontWeight: 700,
                 }}>
                   {item.badge}
@@ -187,26 +189,19 @@ export default function Sidebar({
         <div style={{
           padding: '0.65rem 0.75rem',
           borderRadius: '8px',
-          background: 'rgba(255, 255, 255, 0.025)',
+          background: 'var(--ks-paper-raised)',
           border: '1px solid var(--border-subtle)',
+          boxShadow: 'var(--ks-lift-1)',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-            <span style={{ fontSize: '0.74rem', fontWeight: 600, color: '#f8fafc' }}>
+            <span style={{ fontSize: '0.74rem', fontWeight: 700, color: 'var(--ks-ink)' }}>
               {currentUser}
             </span>
-            <span style={{
-              fontSize: '0.62rem',
-              fontFamily: 'var(--font-mono)',
-              padding: '0.1rem 0.4rem',
-              borderRadius: '4px',
-              background: 'rgba(16, 185, 129, 0.12)',
-              color: 'var(--mint-sage)',
-              border: '1px solid rgba(16, 185, 129, 0.25)',
-            }}>
+            <span className="badge badge-patina" style={{ fontSize: '0.62rem', padding: '0.1rem 0.4rem' }}>
               Active
             </span>
           </div>
-          <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+          <div style={{ fontSize: '0.68rem', color: 'var(--ks-text-muted)', fontFamily: 'var(--font-mono)' }}>
             Workspace: Production
           </div>
         </div>
@@ -214,6 +209,7 @@ export default function Sidebar({
         {onSignOut && (
           <button
             onClick={onSignOut}
+            className="btn btn-ghost"
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -221,21 +217,9 @@ export default function Sidebar({
               gap: '0.5rem',
               padding: '0.5rem',
               borderRadius: '6px',
-              background: 'transparent',
-              border: '1px solid var(--border-subtle)',
-              color: 'var(--text-muted)',
               fontSize: '0.76rem',
               fontFamily: 'var(--font-sans)',
-              cursor: 'pointer',
-              transition: 'all var(--transition-fast)',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = '#f8fafc';
-              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = 'var(--text-muted)';
-              e.currentTarget.style.borderColor = 'var(--border-subtle)';
+              border: '1px solid var(--border-subtle)',
             }}
           >
             <LogOut size={13} />

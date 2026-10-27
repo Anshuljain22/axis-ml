@@ -11,6 +11,7 @@ import {
   CheckCircle,
   TrendingUp,
   Target,
+  RefreshCw,
 } from 'lucide-react';
 
 export default function UnsupervisedTab({ activeDataset }) {
@@ -38,8 +39,8 @@ export default function UnsupervisedTab({ activeDataset }) {
 
   if (!activeDataset) {
     return (
-      <div className="glass-panel" style={{ margin: '2rem', padding: '3rem', textAlign: 'center' }}>
-        <p style={{ color: 'var(--text-muted)' }}>Please select a dataset to access the Unsupervised & Anomaly Lab.</p>
+      <div className="glass-panel" style={{ margin: '2rem', padding: '3.5rem', textAlign: 'center' }}>
+        <p style={{ color: 'var(--text-muted)' }}>Please select a dataset from the top navigation to access the Unsupervised & Anomaly Lab.</p>
       </div>
     );
   }
@@ -97,11 +98,13 @@ export default function UnsupervisedTab({ activeDataset }) {
   return (
     <div className="animate-fade-in" style={{ padding: '1.75rem', display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
       {/* Header & Sub-Navigation */}
-      <div className="glass-panel" style={{ padding: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+      <div className="glass-panel" style={{ padding: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', borderLeft: '4px solid var(--ks-kinpaku)' }}>
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-            <Layers size={22} color="var(--purple-telemetry)" />
-            <h2 style={{ margin: 0, fontSize: '1.4rem' }}>Unsupervised Intelligence & Anomaly Lab</h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+            <div style={{ width: 34, height: 34, borderRadius: 'var(--radius-sm)', background: 'var(--ks-kinpaku-tint)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--ks-kinpaku)' }}>
+              <Layers size={18} />
+            </div>
+            <h2 style={{ margin: 0, fontSize: '1.35rem', color: 'var(--ks-ink)' }}>Unsupervised Intelligence & Anomaly Lab</h2>
           </div>
           <p style={{ margin: '0.35rem 0 0 0', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
             Clustering patterns, Principal Component Analysis (PCA) projection, and multivariate outlier detection.
@@ -109,7 +112,7 @@ export default function UnsupervisedTab({ activeDataset }) {
         </div>
 
         {/* Sub-Tab Navigation Pills */}
-        <div style={{ display: 'flex', gap: '0.5rem', background: 'rgba(14, 20, 32, 0.7)', padding: '0.35rem', borderRadius: 'var(--radius-sm)' }}>
+        <div style={{ display: 'flex', gap: '0.4rem', background: 'var(--ks-paper-deep)', padding: '0.35rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
           <button
             className={`btn ${subTab === 'clustering' ? 'btn-primary' : 'btn-ghost'}`}
             style={{ fontSize: '0.8rem', padding: '0.45rem 0.85rem' }}
@@ -142,7 +145,7 @@ export default function UnsupervisedTab({ activeDataset }) {
         <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: '1.5rem', alignItems: 'start' }}>
           {/* Controls */}
           <div className="glass-panel" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
-            <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--cyan-neon)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--ks-kinpaku)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
               Clustering Controls
             </div>
 
@@ -163,7 +166,10 @@ export default function UnsupervisedTab({ activeDataset }) {
 
             {clusterMethod !== 'dbscan' && (
               <div>
-                <label className="form-label">Number of Clusters (k = {nClusters})</label>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.3rem' }}>
+                  <label className="form-label" style={{ margin: 0 }}>Number of Clusters</label>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--ks-kinpaku)', fontSize: '0.85rem' }}>k = {nClusters}</span>
+                </div>
                 <input
                   type="range"
                   min={2}
@@ -171,20 +177,20 @@ export default function UnsupervisedTab({ activeDataset }) {
                   step={1}
                   value={nClusters}
                   onChange={(e) => setNClusters(e.target.value)}
-                  style={{ width: '100%' }}
+                  style={{ width: '100%', accentColor: 'var(--ks-kinpaku)' }}
                 />
               </div>
             )}
 
             <button
               className="btn btn-primary"
-              style={{ width: '100%', padding: '0.65rem' }}
+              style={{ width: '100%', padding: '0.7rem', justifyContent: 'center' }}
               disabled={clusterLoading}
               onClick={handleRunClustering}
             >
               {clusterLoading ? (
                 <>
-                  <span className="pulse-dot pulse-dot-orange" />
+                  <RefreshCw size={15} className="animate-spin" />
                   <span>Computing Clusters...</span>
                 </>
               ) : (
@@ -196,7 +202,7 @@ export default function UnsupervisedTab({ activeDataset }) {
             </button>
 
             {clusterError && (
-              <div className="badge badge-rose" style={{ padding: '0.5rem' }}>
+              <div className="badge badge-vermilion" style={{ padding: '0.6rem 0.8rem' }}>
                 <AlertCircle size={14} />
                 <span>{clusterError}</span>
               </div>
@@ -207,42 +213,42 @@ export default function UnsupervisedTab({ activeDataset }) {
           <div className="glass-panel" style={{ padding: '1.5rem' }}>
             {!clusterResult ? (
               <div style={{ padding: '4rem 2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-                <Layers size={48} style={{ opacity: 0.25, margin: '0 auto 1rem auto' }} />
-                <p>Select algorithm and cluster count, then click <strong>Execute Clustering</strong>.</p>
-                <p style={{ fontSize: '0.75rem', marginTop: '0.4rem' }}>
-                  Features are standardized and evaluated with Silhouette, Davies-Bouldin, and Calinski-Harabasz metrics.
+                <Layers size={44} style={{ opacity: 0.3, margin: '0 auto 1rem auto', color: 'var(--ks-kinpaku)' }} />
+                <p style={{ color: 'var(--ks-ink)', fontWeight: 600 }}>No clustering run executed yet</p>
+                <p style={{ fontSize: '0.82rem', marginTop: '0.35rem' }}>
+                  Select an algorithm and cluster count on the left, then click <strong>Execute Clustering</strong>.
                 </p>
               </div>
             ) : (
               <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                 {/* Metric Summary Cards */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.75rem' }}>
-                  <div style={{ background: 'rgba(14, 20, 32, 0.7)', padding: '0.85rem', borderRadius: 'var(--radius-sm)' }}>
-                    <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>CLUSTERS FOUND</div>
-                    <div style={{ fontSize: '1.35rem', fontWeight: 700, color: 'var(--cyan-neon)', fontFamily: 'var(--font-mono)' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.75rem' }}>
+                  <div style={{ background: 'var(--ks-paper-deep)', padding: '0.85rem 1rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
+                    <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', textTransform: 'uppercase' }}>CLUSTERS FOUND</div>
+                    <div style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--ks-kinpaku)', fontFamily: 'var(--font-mono)', marginTop: '0.2rem' }}>
                       {clusterResult.n_clusters_found}
                     </div>
                   </div>
                   {clusterResult.metrics?.silhouette_score !== undefined && clusterResult.metrics?.silhouette_score !== null && (
-                    <div style={{ background: 'rgba(14, 20, 32, 0.7)', padding: '0.85rem', borderRadius: 'var(--radius-sm)' }}>
-                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>SILHOUETTE SCORE</div>
-                      <div style={{ fontSize: '1.35rem', fontWeight: 700, color: clusterResult.metrics.silhouette_score > 0.4 ? 'var(--emerald-neon)' : 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
+                    <div style={{ background: 'var(--ks-paper-deep)', padding: '0.85rem 1rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
+                      <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', textTransform: 'uppercase' }}>SILHOUETTE SCORE</div>
+                      <div style={{ fontSize: '1.4rem', fontWeight: 700, color: clusterResult.metrics.silhouette_score > 0.4 ? 'var(--ks-patina)' : 'var(--ks-ink)', fontFamily: 'var(--font-mono)', marginTop: '0.2rem' }}>
                         {clusterResult.metrics.silhouette_score}
                       </div>
                     </div>
                   )}
                   {clusterResult.metrics?.davies_bouldin_score !== undefined && clusterResult.metrics?.davies_bouldin_score !== null && (
-                    <div style={{ background: 'rgba(14, 20, 32, 0.7)', padding: '0.85rem', borderRadius: 'var(--radius-sm)' }}>
-                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>DAVIES-BOULDIN</div>
-                      <div style={{ fontSize: '1.35rem', fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
+                    <div style={{ background: 'var(--ks-paper-deep)', padding: '0.85rem 1rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
+                      <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', textTransform: 'uppercase' }}>DAVIES-BOULDIN</div>
+                      <div style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--ks-ink)', fontFamily: 'var(--font-mono)', marginTop: '0.2rem' }}>
                         {clusterResult.metrics.davies_bouldin_score}
                       </div>
                     </div>
                   )}
                   {clusterResult.metrics?.inertia !== undefined && (
-                    <div style={{ background: 'rgba(14, 20, 32, 0.7)', padding: '0.85rem', borderRadius: 'var(--radius-sm)' }}>
-                      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>INERTIA (WCSS)</div>
-                      <div style={{ fontSize: '1.35rem', fontWeight: 700, color: 'var(--orange-racing)', fontFamily: 'var(--font-mono)' }}>
+                    <div style={{ background: 'var(--ks-paper-deep)', padding: '0.85rem 1rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
+                      <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', textTransform: 'uppercase' }}>INERTIA (WCSS)</div>
+                      <div style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--ks-ink)', fontFamily: 'var(--font-mono)', marginTop: '0.2rem' }}>
                         {clusterResult.metrics.inertia}
                       </div>
                     </div>
@@ -251,17 +257,17 @@ export default function UnsupervisedTab({ activeDataset }) {
 
                 {/* Cluster Distribution */}
                 <div>
-                  <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.6rem', textTransform: 'uppercase' }}>
+                  <div style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                     Cluster Size Distribution
                   </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.6rem' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '0.75rem' }}>
                     {Object.entries(clusterResult.cluster_distribution || {}).map(([cName, cInfo]) => (
-                      <div key={cName} style={{ background: 'rgba(14, 20, 32, 0.6)', padding: '0.75rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
+                      <div key={cName} style={{ background: 'var(--ks-paper-deep)', padding: '0.85rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem' }}>
-                          <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{cName}</span>
-                          <span style={{ color: 'var(--cyan-neon)', fontFamily: 'var(--font-mono)' }}>{cInfo.percentage}%</span>
+                          <span style={{ fontWeight: 600, color: 'var(--ks-ink)' }}>{cName}</span>
+                          <span style={{ color: 'var(--ks-kinpaku)', fontFamily: 'var(--font-mono)', fontWeight: 700 }}>{cInfo.percentage}%</span>
                         </div>
-                        <div style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+                        <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-muted)', marginTop: '0.25rem' }}>
                           {cInfo.count} samples
                         </div>
                       </div>
@@ -271,15 +277,15 @@ export default function UnsupervisedTab({ activeDataset }) {
 
                 {/* Sample Records Table */}
                 <div>
-                  <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.6rem', textTransform: 'uppercase' }}>
-                    Sample Cluster Assignments (First 20 Samples)
+                  <div style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                    Sample Cluster Assignments (First 20 Records)
                   </div>
-                  <div style={{ maxHeight: '240px', overflowY: 'auto' }}>
-                    <table className="retro-table" style={{ width: '100%', fontSize: '0.75rem' }}>
+                  <div className="data-table-wrapper" style={{ maxHeight: '250px' }}>
+                    <table className="data-table">
                       <thead>
                         <tr>
-                          <th>Sample #</th>
-                          <th>Cluster</th>
+                          <th style={{ width: 80 }}>Sample #</th>
+                          <th style={{ width: 120 }}>Cluster</th>
                           {clusterResult.features_used.slice(0, 4).map(f => <th key={f}>{f}</th>)}
                         </tr>
                       </thead>
@@ -288,7 +294,7 @@ export default function UnsupervisedTab({ activeDataset }) {
                           <tr key={idx}>
                             <td style={{ fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>#{idx + 1}</td>
                             <td>
-                              <span className="badge badge-purple" style={{ fontSize: '0.7rem' }}>
+                              <span className="badge badge-gold" style={{ fontSize: '0.7rem' }}>
                                 Cluster {s.cluster}
                               </span>
                             </td>
@@ -312,7 +318,7 @@ export default function UnsupervisedTab({ activeDataset }) {
         <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: '1.5rem', alignItems: 'start' }}>
           {/* Controls */}
           <div className="glass-panel" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
-            <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--cyan-neon)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--ks-kinpaku)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
               PCA Configuration
             </div>
 
@@ -324,20 +330,20 @@ export default function UnsupervisedTab({ activeDataset }) {
                 onChange={(e) => setPcaComponents(e.target.value)}
               >
                 <option value={2}>2 Components (2D Plane)</option>
-                <option value={3}>3 Components (3D Volume)</option>
+                <option value={3}>3 Components (3D Space)</option>
                 <option value={4}>4 Components</option>
               </select>
             </div>
 
             <button
               className="btn btn-primary"
-              style={{ width: '100%', padding: '0.65rem' }}
+              style={{ width: '100%', padding: '0.7rem', justifyContent: 'center' }}
               disabled={pcaLoading}
               onClick={handleRunPca}
             >
               {pcaLoading ? (
                 <>
-                  <span className="pulse-dot pulse-dot-orange" />
+                  <RefreshCw size={15} className="animate-spin" />
                   <span>Projecting Dimensions...</span>
                 </>
               ) : (
@@ -349,7 +355,7 @@ export default function UnsupervisedTab({ activeDataset }) {
             </button>
 
             {pcaError && (
-              <div className="badge badge-rose" style={{ padding: '0.5rem' }}>
+              <div className="badge badge-vermilion" style={{ padding: '0.6rem 0.8rem' }}>
                 <AlertCircle size={14} />
                 <span>{pcaError}</span>
               </div>
@@ -360,43 +366,43 @@ export default function UnsupervisedTab({ activeDataset }) {
           <div className="glass-panel" style={{ padding: '1.5rem' }}>
             {!pcaResult ? (
               <div style={{ padding: '4rem 2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-                <ScatterChart size={48} style={{ opacity: 0.25, margin: '0 auto 1rem auto' }} />
-                <p>Click <strong>Compute PCA Projection</strong> to reduce feature dimensionality.</p>
-                <p style={{ fontSize: '0.75rem', marginTop: '0.4rem' }}>
-                  Calculates explained variance ratios, singular values, and feature loadings across orthogonal components.
+                <ScatterChart size={44} style={{ opacity: 0.3, margin: '0 auto 1rem auto', color: 'var(--ks-kinpaku)' }} />
+                <p style={{ color: 'var(--ks-ink)', fontWeight: 600 }}>No PCA decomposition computed</p>
+                <p style={{ fontSize: '0.82rem', marginTop: '0.35rem' }}>
+                  Click <strong>Compute PCA Projection</strong> to reduce dimensionality and view explained variance ratios.
                 </p>
               </div>
             ) : (
               <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                 {/* Total Explained Variance Banner */}
-                <div style={{ background: 'rgba(14, 20, 32, 0.8)', padding: '1rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ background: 'var(--ks-paper-deep)', padding: '1.25rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)', borderLeft: '4px solid var(--ks-kinpaku)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>TOTAL VARIANCE PRESERVED</div>
-                    <div style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--cyan-neon)', fontFamily: 'var(--font-mono)' }}>
+                    <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>TOTAL VARIANCE PRESERVED</div>
+                    <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--ks-kinpaku)', fontFamily: 'var(--font-mono)', marginTop: '0.2rem' }}>
                       {(pcaResult.total_explained_variance * 100).toFixed(2)}%
                     </div>
                   </div>
-                  <span className="badge badge-emerald">
+                  <span className="badge badge-patina">
                     {pcaResult.n_components} Components Selected
                   </span>
                 </div>
 
                 {/* Scree Plot / Variance Bars */}
                 <div>
-                  <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.6rem', textTransform: 'uppercase' }}>
+                  <div style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                     Explained Variance Ratio per Component
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                     {pcaResult.explained_variance_ratio.map((evr, i) => (
-                      <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem' }}>
-                          <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>PC{i + 1}</span>
-                          <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--cyan-neon)' }}>
-                            {(evr * 100).toFixed(2)}% (Cumulative: {(pcaResult.cumulative_variance_ratio[i] * 100).toFixed(2)}%)
+                      <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem' }}>
+                          <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, color: 'var(--ks-ink)' }}>PC{i + 1}</span>
+                          <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--ks-kinpaku)', fontWeight: 700 }}>
+                            {(evr * 100).toFixed(2)}% <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>(Cumulative: {(pcaResult.cumulative_variance_ratio[i] * 100).toFixed(2)}%)</span>
                           </span>
                         </div>
-                        <div style={{ background: 'rgba(255,255,255,0.06)', height: '8px', borderRadius: '4px', overflow: 'hidden' }}>
-                          <div style={{ width: `${evr * 100}%`, height: '100%', background: 'var(--orange-racing)', borderRadius: '4px' }} />
+                        <div style={{ background: '#e8e4dc', height: '8px', borderRadius: '4px', overflow: 'hidden' }}>
+                          <div style={{ width: `${evr * 100}%`, height: '100%', background: 'linear-gradient(90deg, var(--ks-kinpaku), #d99f36)', borderRadius: '4px' }} />
                         </div>
                       </div>
                     ))}
@@ -405,21 +411,21 @@ export default function UnsupervisedTab({ activeDataset }) {
 
                 {/* Component Loadings */}
                 <div>
-                  <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.6rem', textTransform: 'uppercase' }}>
+                  <div style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                     Top Feature Loadings (Weights in Principal Axes)
                   </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '0.75rem' }}>
                     {pcaResult.components.map((c) => (
-                      <div key={c.component} style={{ background: 'rgba(14, 20, 32, 0.6)', padding: '0.85rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.3rem' }}>
-                          <span style={{ fontWeight: 700, color: 'var(--cyan-neon)' }}>{c.component}</span>
-                          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{(c.explained_variance_ratio * 100).toFixed(1)}% var</span>
+                      <div key={c.component} style={{ background: 'var(--ks-paper-deep)', padding: '0.9rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.35rem' }}>
+                          <span style={{ fontWeight: 700, color: 'var(--ks-ink)' }}>{c.component}</span>
+                          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>{(c.explained_variance_ratio * 100).toFixed(1)}% var</span>
                         </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
                           {Object.entries(c.loadings).slice(0, 4).map(([fName, loadVal]) => (
                             <div key={fName} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem' }}>
                               <span style={{ color: 'var(--text-muted)' }}>{fName}:</span>
-                              <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, color: loadVal >= 0 ? 'var(--emerald-neon)' : 'var(--rose-neon)' }}>
+                              <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, color: loadVal >= 0 ? 'var(--ks-patina)' : 'var(--ks-vermilion)' }}>
                                 {loadVal > 0 ? `+${loadVal.toFixed(3)}` : loadVal.toFixed(3)}
                               </span>
                             </div>
@@ -440,7 +446,7 @@ export default function UnsupervisedTab({ activeDataset }) {
         <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: '1.5rem', alignItems: 'start' }}>
           {/* Controls */}
           <div className="glass-panel" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
-            <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--cyan-neon)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--ks-kinpaku)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
               Anomaly Parameters
             </div>
 
@@ -458,7 +464,10 @@ export default function UnsupervisedTab({ activeDataset }) {
             </div>
 
             <div>
-              <label className="form-label">Contamination Rate ({(contamination * 100).toFixed(1)}%)</label>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.3rem' }}>
+                <label className="form-label" style={{ margin: 0 }}>Contamination Rate</label>
+                <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--ks-vermilion)', fontSize: '0.85rem' }}>{(contamination * 100).toFixed(1)}%</span>
+              </div>
               <input
                 type="range"
                 min={0.01}
@@ -466,34 +475,34 @@ export default function UnsupervisedTab({ activeDataset }) {
                 step={0.01}
                 value={contamination}
                 onChange={(e) => setContamination(e.target.value)}
-                style={{ width: '100%' }}
+                style={{ width: '100%', accentColor: 'var(--ks-vermilion)' }}
               />
-              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '0.3rem' }}>
                 Estimated fraction of outliers in the dataset (1% to 20%).
               </div>
             </div>
 
             <button
               className="btn btn-primary"
-              style={{ width: '100%', padding: '0.65rem' }}
+              style={{ width: '100%', padding: '0.7rem', justifyContent: 'center' }}
               disabled={anomalyLoading}
               onClick={handleRunAnomaly}
             >
               {anomalyLoading ? (
                 <>
-                  <span className="pulse-dot pulse-dot-orange" />
+                  <RefreshCw size={15} className="animate-spin" />
                   <span>Scanning for Outliers...</span>
                 </>
               ) : (
                 <>
-                  <ShieldAlert size={14} />
+                  <ShieldAlert size={15} />
                   <span>Scan for Anomalies</span>
                 </>
               )}
             </button>
 
             {anomalyError && (
-              <div className="badge badge-rose" style={{ padding: '0.5rem' }}>
+              <div className="badge badge-vermilion" style={{ padding: '0.6rem 0.8rem' }}>
                 <AlertCircle size={14} />
                 <span>{anomalyError}</span>
               </div>
@@ -504,33 +513,33 @@ export default function UnsupervisedTab({ activeDataset }) {
           <div className="glass-panel" style={{ padding: '1.5rem' }}>
             {!anomalyResult ? (
               <div style={{ padding: '4rem 2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-                <ShieldAlert size={48} style={{ opacity: 0.25, margin: '0 auto 1rem auto' }} />
-                <p>Configure sensitivity and click <strong>Scan for Anomalies</strong>.</p>
-                <p style={{ fontSize: '0.75rem', marginTop: '0.4rem' }}>
-                  Isolates abnormal data points, sensor glitches, telemetry spikes, and distribution outliers.
+                <ShieldAlert size={44} style={{ opacity: 0.3, margin: '0 auto 1rem auto', color: 'var(--ks-vermilion)' }} />
+                <p style={{ color: 'var(--ks-ink)', fontWeight: 600 }}>No anomaly scan executed yet</p>
+                <p style={{ fontSize: '0.82rem', marginTop: '0.35rem' }}>
+                  Configure sensitivity and click <strong>Scan for Anomalies</strong> to isolate abnormal distribution points.
                 </p>
               </div>
             ) : (
               <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                 {/* Outlier Metrics Cards */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.75rem' }}>
-                  <div style={{ background: 'rgba(14, 20, 32, 0.7)', padding: '0.85rem', borderRadius: 'var(--radius-sm)' }}>
-                    <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>TOTAL ROWS</div>
-                    <div style={{ fontSize: '1.35rem', fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.75rem' }}>
+                  <div style={{ background: 'var(--ks-paper-deep)', padding: '0.85rem 1rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
+                    <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>TOTAL ROWS</div>
+                    <div style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--ks-ink)', fontFamily: 'var(--font-mono)', marginTop: '0.2rem' }}>
                       {anomalyResult.total_rows}
                     </div>
                   </div>
 
-                  <div style={{ background: 'rgba(14, 20, 32, 0.7)', padding: '0.85rem', borderRadius: 'var(--radius-sm)' }}>
-                    <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>ANOMALIES FOUND</div>
-                    <div style={{ fontSize: '1.35rem', fontWeight: 700, color: 'var(--rose-neon)', fontFamily: 'var(--font-mono)' }}>
+                  <div style={{ background: 'var(--ks-paper-deep)', padding: '0.85rem 1rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)', borderLeft: '3px solid var(--ks-vermilion)' }}>
+                    <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>ANOMALIES FOUND</div>
+                    <div style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--ks-vermilion)', fontFamily: 'var(--font-mono)', marginTop: '0.2rem' }}>
                       {anomalyResult.anomaly_count}
                     </div>
                   </div>
 
-                  <div style={{ background: 'rgba(14, 20, 32, 0.7)', padding: '0.85rem', borderRadius: 'var(--radius-sm)' }}>
-                    <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>ANOMALY RATE</div>
-                    <div style={{ fontSize: '1.35rem', fontWeight: 700, color: 'var(--orange-racing)', fontFamily: 'var(--font-mono)' }}>
+                  <div style={{ background: 'var(--ks-paper-deep)', padding: '0.85rem 1rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
+                    <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>ANOMALY RATE</div>
+                    <div style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--ks-kinpaku)', fontFamily: 'var(--font-mono)', marginTop: '0.2rem' }}>
                       {anomalyResult.anomaly_percentage}%
                     </div>
                   </div>
@@ -538,35 +547,35 @@ export default function UnsupervisedTab({ activeDataset }) {
 
                 {/* Top Anomalies Table */}
                 <div>
-                  <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.6rem', textTransform: 'uppercase' }}>
+                  <div style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                     Strongest Outliers (Ranked by Anomaly Score)
                   </div>
-                  <div style={{ maxHeight: '280px', overflowY: 'auto' }}>
-                    <table className="retro-table" style={{ width: '100%', fontSize: '0.75rem' }}>
+                  <div className="data-table-wrapper" style={{ maxHeight: '280px' }}>
+                    <table className="data-table">
                       <thead>
                         <tr>
-                          <th>Row Index</th>
-                          <th>Anomaly Score</th>
-                          <th>Status</th>
+                          <th style={{ width: 100 }}>Row Index</th>
+                          <th style={{ width: 130 }}>Anomaly Score</th>
+                          <th style={{ width: 100 }}>Status</th>
                           {anomalyResult.features_evaluated.slice(0, 4).map(f => <th key={f}>{f}</th>)}
                         </tr>
                       </thead>
                       <tbody>
                         {anomalyResult.top_anomalies.map((item, idx) => (
-                          <tr key={idx} style={{ background: item._is_outlier ? 'rgba(255, 42, 109, 0.08)' : 'transparent' }}>
-                            <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, color: 'var(--cyan-neon)' }}>
+                          <tr key={idx} style={{ background: item._is_outlier ? 'var(--ks-vermilion-tint)' : 'transparent' }}>
+                            <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, color: 'var(--ks-ink)' }}>
                               #{item._row_index}
                             </td>
-                            <td style={{ fontFamily: 'var(--font-mono)', color: 'var(--rose-neon)' }}>
+                            <td style={{ fontFamily: 'var(--font-mono)', color: 'var(--ks-vermilion)', fontWeight: 600 }}>
                               {item._anomaly_score}
                             </td>
                             <td>
                               {item._is_outlier ? (
-                                <span className="badge badge-rose" style={{ fontSize: '0.65rem' }}>
+                                <span className="badge badge-vermilion" style={{ fontSize: '0.68rem' }}>
                                   Outlier
                                 </span>
                               ) : (
-                                <span className="badge badge-emerald" style={{ fontSize: '0.65rem' }}>
+                                <span className="badge badge-patina" style={{ fontSize: '0.68rem' }}>
                                   Normal
                                 </span>
                               )}

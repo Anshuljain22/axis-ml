@@ -9,7 +9,8 @@ import {
   FileSpreadsheet, 
   Sparkles,
   RefreshCw,
-  Cpu
+  Cpu,
+  ArrowRight
 } from 'lucide-react';
 
 export default function InferenceCockpitTab({ 
@@ -165,29 +166,29 @@ export default function InferenceCockpitTab({
   };
 
   return (
-    <div className="animate-fade-in" style={{ padding: '1.75rem', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+    <div className="animate-fade-in" style={{ padding: '1.75rem', display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
       {/* Top Controls: Active Model Selector */}
-      <div className="glass-panel" style={{ padding: '1.25rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
+      <div className="glass-panel" style={{ padding: '1.25rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', borderLeft: '4px solid var(--ks-kinpaku)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <div style={{
-            width: 38,
-            height: 38,
+            width: 42,
+            height: 42,
             borderRadius: 'var(--radius-sm)',
-            background: 'rgba(0, 229, 255, 0.12)',
+            background: 'var(--ks-kinpaku-tint)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: 'var(--cyan-neon)',
-            border: '1px solid rgba(0, 229, 255, 0.3)',
+            color: 'var(--ks-kinpaku)',
+            border: '1px solid var(--ks-kinpaku-glow)',
           }}>
-            <Zap size={20} />
+            <Zap size={22} />
           </div>
           <div>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-              ACTIVE INFERENCE PIPELINE
+            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+              Active Inference Pipeline
             </div>
-            <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-              {selectedRun ? `${selectedRun.model_name?.toUpperCase()} (${selectedRun.task_type})` : 'No Model Loaded'}
+            <div style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--ks-ink)' }}>
+              {selectedRun ? `${selectedRun.model_name?.toUpperCase()} · ${selectedRun.task_type}` : 'No Model Loaded'}
             </div>
           </div>
         </div>
@@ -195,7 +196,7 @@ export default function InferenceCockpitTab({
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <select
             className="form-select"
-            style={{ minWidth: 260, padding: '0.45rem 0.75rem', fontSize: '0.85rem' }}
+            style={{ minWidth: 280, padding: '0.5rem 0.85rem', fontSize: '0.85rem' }}
             value={selectedRun?.id || ''}
             onChange={(e) => {
               const run = runs.find((r) => r.id === e.target.value);
@@ -206,7 +207,7 @@ export default function InferenceCockpitTab({
             {runs.length === 0 && <option value="">No trained models found</option>}
             {runs.map((r) => (
               <option key={r.id} value={r.id}>
-                {r.model_name?.toUpperCase()} — Run {r.id.slice(0, 8)}... ({r.task_type})
+                {r.model_name?.toUpperCase()} — Run {r.id.slice(0, 8)} ({r.task_type})
               </option>
             ))}
           </select>
@@ -217,65 +218,77 @@ export default function InferenceCockpitTab({
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.75rem', alignItems: 'start' }}>
         {/* Single Sample Predictor */}
         <div className="glass-panel" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.85rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-              <Zap size={20} color="var(--cyan-neon)" />
-              <h3>Single Sample Inference</h3>
+              <div style={{ width: 28, height: 28, borderRadius: 'var(--radius-sm)', background: 'var(--ks-kinpaku-tint)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--ks-kinpaku)' }}>
+                <Zap size={16} />
+              </div>
+              <h3 style={{ margin: 0, fontSize: '1.1rem', color: 'var(--ks-ink)' }}>Single Sample Scoring</h3>
             </div>
             {sampleRows.length > 0 && (
               <button
                 type="button"
                 className="btn btn-ghost"
-                style={{ padding: '0.2rem 0.5rem', fontSize: '0.75rem', gap: '0.3rem' }}
+                style={{ padding: '0.3rem 0.6rem', fontSize: '0.75rem', gap: '0.35rem' }}
                 onClick={handleLoadSampleFromDataset}
               >
-                <RefreshCw size={12} />
-                <span>Sample Random Row</span>
+                <RefreshCw size={13} />
+                <span>Fill Random Row</span>
               </button>
             )}
           </div>
 
           {!selectedRun ? (
-            <p style={{ color: 'var(--text-muted)' }}>Train a model in Model Studio to start testing predictions.</p>
+            <div style={{ padding: '3rem 1.5rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+              <p>Train a model in Model Studio or select an active model run above to start scoring samples.</p>
+            </div>
           ) : (
-            <form onSubmit={handleSinglePredict} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <form onSubmit={handleSinglePredict} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
               {/* Feature Inputs */}
-              <div style={{ maxHeight: 280, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.75rem', paddingRight: '0.5rem' }}>
-                {Object.keys(inputValues).map((feat) => (
-                  <div key={feat}>
-                    <label className="form-label" style={{ fontSize: '0.75rem' }}>{feat}</label>
-                    <input
-                      type="text"
-                      className="form-input"
-                      value={inputValues[feat] !== undefined ? inputValues[feat] : ''}
-                      onChange={(e) => handleInputChange(feat, e.target.value)}
-                    />
-                  </div>
-                ))}
+              <div>
+                <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.5rem' }}>
+                  Feature Vector Inputs
+                </div>
+                <div style={{ maxHeight: 290, overflowY: 'auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem', paddingRight: '0.25rem' }}>
+                  {Object.keys(inputValues).map((feat) => (
+                    <div key={feat} style={{ background: 'var(--ks-paper-deep)', padding: '0.6rem 0.75rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
+                      <label className="form-label" style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginBottom: '0.25rem', fontFamily: 'var(--font-mono)' }}>
+                        {feat}
+                      </label>
+                      <input
+                        type="text"
+                        className="form-input"
+                        style={{ padding: '0.35rem 0.6rem', fontSize: '0.85rem' }}
+                        value={inputValues[feat] !== undefined ? inputValues[feat] : ''}
+                        onChange={(e) => handleInputChange(feat, e.target.value)}
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
 
               <button
                 type="submit"
                 className="btn btn-primary"
-                style={{ width: '100%', padding: '0.75rem' }}
+                style={{ width: '100%', padding: '0.75rem', fontSize: '0.9rem', justifyContent: 'center' }}
                 disabled={predicting}
               >
                 {predicting ? (
                   <>
-                    <span className="pulse-dot pulse-dot-cyan" />
-                    <span>Scoring Unscaled Features...</span>
+                    <RefreshCw size={16} className="animate-spin" />
+                    <span>Scoring Feature Vector...</span>
                   </>
                 ) : (
                   <>
                     <Play size={16} fill="currentColor" />
-                    <span>Run Inference</span>
+                    <span>Run Inference Scoring</span>
                   </>
                 )}
               </button>
 
               {singleError && (
-                <div className="badge badge-rose" style={{ padding: '0.5rem' }}>
-                  <AlertCircle size={14} />
+                <div className="badge badge-vermilion" style={{ padding: '0.6rem 0.85rem', width: '100%' }}>
+                  <AlertCircle size={15} />
                   <span>{singleError}</span>
                 </div>
               )}
@@ -283,35 +296,41 @@ export default function InferenceCockpitTab({
               {/* Single Prediction Result */}
               {singleResult && (
                 <div className="animate-fade-in" style={{ 
-                  background: 'rgba(14, 20, 32, 0.85)', 
-                  padding: '1.25rem', 
+                  background: 'var(--ks-paper-deep)', 
+                  padding: '1.35rem', 
                   borderRadius: 'var(--radius-sm)', 
-                  border: '1px solid var(--border-highlight)' 
+                  border: '1px solid var(--border-subtle)',
+                  borderLeft: '4px solid var(--ks-kinpaku)'
                 }}>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-                    PREDICTED OUTPUT
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                      Predicted Target Value
+                    </div>
+                    <span className="badge badge-patina" style={{ fontSize: '0.7rem' }}>
+                      Scored Instantly
+                    </span>
                   </div>
-                  <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--cyan-neon)', fontFamily: 'var(--font-mono)', marginTop: '0.2rem' }}>
+                  <div style={{ fontSize: '2.4rem', fontWeight: 800, color: 'var(--ks-kinpaku)', fontFamily: 'var(--font-mono)', marginTop: '0.35rem', letterSpacing: '-0.02em' }}>
                     {typeof singleResult.prediction === 'number' ? singleResult.prediction.toFixed(4) : String(singleResult.prediction)}
                   </div>
 
                   {/* Probabilities (if classification) */}
                   {singleResult.probabilities && (
-                    <div style={{ marginTop: '1rem', borderTop: '1px solid rgba(255, 255, 255, 0.05)', paddingTop: '0.75rem' }}>
-                      <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
-                        Class Probabilities
+                    <div style={{ marginTop: '1.25rem', borderTop: '1px solid var(--border-subtle)', paddingTop: '0.85rem' }}>
+                      <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--ks-ink)', marginBottom: '0.65rem' }}>
+                        Class Probability Distribution
                       </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
                         {Object.entries(singleResult.probabilities).map(([cls, prob]) => {
                           const pct = (Number(prob) * 100).toFixed(1);
                           return (
                             <div key={cls}>
-                              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', fontFamily: 'var(--font-mono)', marginBottom: '0.2rem' }}>
-                                <span>Class {cls}</span>
-                                <strong style={{ color: 'var(--cyan-neon)' }}>{pct}%</strong>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', fontFamily: 'var(--font-mono)', marginBottom: '0.25rem' }}>
+                                <span style={{ color: 'var(--text-secondary)' }}>Class {cls}</span>
+                                <strong style={{ color: 'var(--ks-ink)' }}>{pct}%</strong>
                               </div>
-                              <div style={{ height: 6, background: 'rgba(255, 255, 255, 0.05)', borderRadius: 3, overflow: 'hidden' }}>
-                                <div style={{ width: `${pct}%`, height: '100%', background: 'linear-gradient(90deg, var(--cyan-neon), #00b0ff)', borderRadius: 3 }} />
+                              <div style={{ height: 6, background: '#e8e4dc', borderRadius: 3, overflow: 'hidden' }}>
+                                <div style={{ width: `${pct}%`, height: '100%', background: 'linear-gradient(90deg, var(--ks-kinpaku), #d99f36)', borderRadius: 3 }} />
                               </div>
                             </div>
                           );
@@ -327,20 +346,27 @@ export default function InferenceCockpitTab({
 
         {/* High-Throughput Batch Inference */}
         <div className="glass-panel" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.85rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-              <Layers size={20} color="var(--orange-racing)" />
-              <h3>Batch Inference Lab</h3>
+              <div style={{ width: 28, height: 28, borderRadius: 'var(--radius-sm)', background: 'var(--ks-patina-tint)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--ks-patina)' }}>
+                <Layers size={16} />
+              </div>
+              <h3 style={{ margin: 0, fontSize: '1.1rem', color: 'var(--ks-ink)' }}>Batch Inference Lab</h3>
             </div>
-            <span className="badge badge-orange">Up to 1,000 samples</span>
+            <span className="badge badge-gold">Vectorized Scoring</span>
           </div>
 
           <div>
-            <label className="form-label">Instances Payload (JSON Array)</label>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.45rem' }}>
+              <label className="form-label" style={{ margin: 0 }}>Payload (JSON Array of Objects)</label>
+              <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+                Sample preview loaded
+              </span>
+            </div>
             <textarea
               className="form-input"
-              rows={8}
-              style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', resize: 'vertical' }}
+              rows={9}
+              style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', resize: 'vertical', lineHeight: 1.5 }}
               value={batchJson}
               onChange={(e) => setBatchJson(e.target.value)}
             />
@@ -348,15 +374,15 @@ export default function InferenceCockpitTab({
 
           <button
             type="button"
-            className="btn btn-primary"
-            style={{ width: '100%', padding: '0.75rem' }}
+            className="btn btn-secondary"
+            style={{ width: '100%', padding: '0.75rem', fontSize: '0.9rem', justifyContent: 'center' }}
             disabled={batchPredicting || !selectedRun}
             onClick={handleBatchPredict}
           >
             {batchPredicting ? (
               <>
-                <span className="pulse-dot pulse-dot-orange" />
-                <span>Running High-Throughput Batch Scoring...</span>
+                <RefreshCw size={16} className="animate-spin" />
+                <span>Vectorizing Batch Scores...</span>
               </>
             ) : (
               <>
@@ -367,8 +393,8 @@ export default function InferenceCockpitTab({
           </button>
 
           {batchError && (
-            <div className="badge badge-rose" style={{ padding: '0.5rem' }}>
-              <AlertCircle size={14} />
+            <div className="badge badge-vermilion" style={{ padding: '0.6rem 0.85rem', width: '100%' }}>
+              <AlertCircle size={15} />
               <span>{batchError}</span>
             </div>
           )}
@@ -377,7 +403,7 @@ export default function InferenceCockpitTab({
           {batchResult && (
             <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span className="badge badge-emerald">
+                <span className="badge badge-patina">
                   Scored {batchResult.count || batchResult.predictions?.length || 0} Instances
                 </span>
                 <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
@@ -385,19 +411,19 @@ export default function InferenceCockpitTab({
                 </span>
               </div>
 
-              <div className="data-table-wrapper" style={{ maxHeight: 200 }}>
+              <div className="data-table-wrapper" style={{ maxHeight: 220 }}>
                 <table className="data-table">
                   <thead>
                     <tr>
-                      <th style={{ width: 40 }}>#</th>
+                      <th style={{ width: 50 }}>#</th>
                       <th>PREDICTED VALUE</th>
                     </tr>
                   </thead>
                   <tbody>
                     {(batchResult.predictions || []).map((pred, pIdx) => (
                       <tr key={pIdx}>
-                        <td style={{ color: 'var(--text-muted)' }}>{pIdx + 1}</td>
-                        <td style={{ color: 'var(--cyan-neon)', fontWeight: 700, fontFamily: 'var(--font-mono)' }}>
+                        <td style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>{pIdx + 1}</td>
+                        <td style={{ color: 'var(--ks-kinpaku)', fontWeight: 700, fontFamily: 'var(--font-mono)', fontSize: '0.9rem' }}>
                           {typeof pred === 'number' ? pred.toFixed(4) : String(pred)}
                         </td>
                       </tr>

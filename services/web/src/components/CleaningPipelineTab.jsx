@@ -196,8 +196,8 @@ export default function CleaningPipelineTab({
             </div>
 
             {/* Missing Value Handling */}
-            <div style={{ background: 'rgba(14, 20, 32, 0.6)', padding: '1rem', borderRadius: 'var(--radius-sm)' }}>
-              <div style={{ fontWeight: 600, fontSize: '0.85rem', marginBottom: '0.75rem', color: 'var(--text-primary)' }}>
+            <div style={{ background: 'var(--ks-paper-deep)', border: '1px solid var(--border-subtle)', padding: '1rem', borderRadius: 'var(--radius-sm)' }}>
+              <div style={{ fontWeight: 700, fontSize: '0.85rem', marginBottom: '0.75rem', color: 'var(--text-primary)' }}>
                 Missing Values Handling
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
@@ -247,8 +247,8 @@ export default function CleaningPipelineTab({
             </div>
 
             {/* Outlier Detection & Capping */}
-            <div style={{ background: 'rgba(14, 20, 32, 0.6)', padding: '1rem', borderRadius: 'var(--radius-sm)' }}>
-              <div style={{ fontWeight: 600, fontSize: '0.85rem', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>
+            <div style={{ background: 'var(--ks-paper-deep)', border: '1px solid var(--border-subtle)', padding: '1rem', borderRadius: 'var(--radius-sm)' }}>
+              <div style={{ fontWeight: 700, fontSize: '0.85rem', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>
                 Outlier Detection & Capping
               </div>
               <select
@@ -263,7 +263,7 @@ export default function CleaningPipelineTab({
             </div>
 
             {/* Deduplication */}
-            <div style={{ background: 'rgba(14, 20, 32, 0.6)', padding: '1rem', borderRadius: 'var(--radius-sm)' }}>
+            <div style={{ background: 'var(--ks-paper-deep)', border: '1px solid var(--border-subtle)', padding: '1rem', borderRadius: 'var(--radius-sm)' }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}>
                 <input
                   type="checkbox"
@@ -276,8 +276,8 @@ export default function CleaningPipelineTab({
 
             {/* Columns to Exclude/Drop */}
             {columns.length > 0 && (
-              <div style={{ background: 'rgba(14, 20, 32, 0.6)', padding: '1rem', borderRadius: 'var(--radius-sm)' }}>
-                <div style={{ fontWeight: 600, fontSize: '0.85rem', marginBottom: '0.5rem' }}>
+              <div style={{ background: 'var(--ks-paper-deep)', border: '1px solid var(--border-subtle)', padding: '1rem', borderRadius: 'var(--radius-sm)' }}>
+                <div style={{ fontWeight: 700, fontSize: '0.85rem', marginBottom: '0.5rem' }}>
                   Drop Columns ({selectedDropCols.length} selected)
                 </div>
                 <div style={{ maxHeight: 140, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
@@ -362,30 +362,30 @@ export default function CleaningPipelineTab({
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
               {/* Impact Counters */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.75rem' }}>
-                <div style={{ background: 'rgba(14, 20, 32, 0.7)', padding: '0.85rem', borderRadius: 'var(--radius-sm)' }}>
+                <div style={{ background: 'var(--ks-paper-deep)', border: '1px solid var(--border-subtle)', padding: '0.85rem', borderRadius: 'var(--radius-sm)' }}>
                   <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>ORIGINAL ROWS</div>
                   <div style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)', marginTop: '0.2rem' }}>
                     {previewResult.original_row_count}
                   </div>
                 </div>
 
-                <div style={{ background: 'rgba(14, 20, 32, 0.7)', padding: '0.85rem', borderRadius: 'var(--radius-sm)' }}>
+                <div style={{ background: 'var(--ks-paper-deep)', border: '1px solid var(--border-subtle)', padding: '0.85rem', borderRadius: 'var(--radius-sm)' }}>
                   <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>CLEANED ROWS</div>
-                  <div style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--cyan-neon)', marginTop: '0.2rem' }}>
+                  <div style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--ks-ink)', marginTop: '0.2rem' }}>
                     {previewResult.new_row_count}
                   </div>
                 </div>
 
-                <div style={{ background: 'rgba(14, 20, 32, 0.7)', padding: '0.85rem', borderRadius: 'var(--radius-sm)' }}>
+                <div style={{ background: 'var(--ks-paper-deep)', border: '1px solid var(--border-subtle)', padding: '0.85rem', borderRadius: 'var(--radius-sm)' }}>
                   <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>ROWS DROPPED</div>
-                  <div style={{ fontSize: '1.25rem', fontWeight: 700, color: previewResult.rows_dropped > 0 ? 'var(--amber-warn)' : 'var(--emerald-pulse)', marginTop: '0.2rem' }}>
+                  <div style={{ fontSize: '1.25rem', fontWeight: 700, color: previewResult.rows_dropped > 0 ? 'var(--ks-vermilion)' : 'var(--ks-patina)', marginTop: '0.2rem' }}>
                     {previewResult.rows_dropped}
                   </div>
                 </div>
 
-                <div style={{ background: 'rgba(14, 20, 32, 0.7)', padding: '0.85rem', borderRadius: 'var(--radius-sm)' }}>
+                <div style={{ background: 'var(--ks-paper-deep)', border: '1px solid var(--border-subtle)', padding: '0.85rem', borderRadius: 'var(--radius-sm)' }}>
                   <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>COLS DROPPED</div>
-                  <div style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--orange-racing)', marginTop: '0.2rem' }}>
+                  <div style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--ks-kinpaku-rich)', marginTop: '0.2rem' }}>
                     {previewResult.columns_dropped?.length || 0}
                   </div>
                 </div>

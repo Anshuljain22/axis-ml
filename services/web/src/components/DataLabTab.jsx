@@ -59,16 +59,16 @@ export default function DataLabTab({ activeDataset }) {
 
   if (loading) {
     return (
-      <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--cyan-neon)' }}>
-        <span className="pulse-dot pulse-dot-cyan" style={{ width: 14, height: 14, marginRight: 8 }} />
-        <span>Loading schema and inspecting records...</span>
+      <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--ks-kinpaku-rich)' }}>
+        <span className="pulse-dot pulse-dot-gold" style={{ width: 14, height: 14, marginRight: 8 }} />
+        <span style={{ fontWeight: 600 }}>Loading schema and inspecting records...</span>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="badge badge-rose" style={{ margin: '2rem', padding: '1rem', width: 'auto' }}>
+      <div className="badge badge-vermilion" style={{ margin: '2rem', padding: '1rem', width: 'auto' }}>
         <AlertTriangle size={18} />
         <span>{error}</span>
       </div>
@@ -124,71 +124,71 @@ export default function DataLabTab({ activeDataset }) {
   const getTypeIcon = (type) => {
     const t = (type || '').toLowerCase();
     if (t.includes('date') || t.includes('time')) return <Calendar size={13} color="var(--purple-telemetry)" />;
-    if (t.includes('num') || t.includes('int') || t.includes('float')) return <Hash size={13} color="var(--cyan-neon)" />;
-    if (t.includes('bool')) return <ToggleLeft size={13} color="var(--emerald-pulse)" />;
-    return <Type size={13} color="var(--orange-racing)" />;
+    if (t.includes('num') || t.includes('int') || t.includes('float')) return <Hash size={13} color="var(--ks-kinpaku)" />;
+    if (t.includes('bool')) return <ToggleLeft size={13} color="var(--ks-patina)" />;
+    return <Type size={13} color="var(--ks-vermilion)" />;
   };
 
   return (
-    <div className="animate-fade-in" style={{ padding: '1.75rem', display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
+    <div className="animate-fade-in" style={{ padding: '0.5rem 0', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       {/* Quality Overview KPIs */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
         <div className="glass-panel" style={{ padding: '1.25rem' }}>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+          <div style={{ fontSize: '0.74rem', color: 'var(--ks-text-muted)', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
             DATA DIMENSIONS
           </div>
-          <div style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--cyan-neon)', fontFamily: 'var(--font-display)', marginTop: '0.25rem' }}>
+          <div style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--ks-ink)', fontFamily: 'var(--font-display)', marginTop: '0.25rem' }}>
             {quality.row_count || activeDataset.row_count} × {quality.column_count || activeDataset.column_count}
           </div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+          <div style={{ fontSize: '0.75rem', color: 'var(--ks-text-muted)' }}>
             {((quality.row_count || 1) * (quality.column_count || 1)).toLocaleString()} Total Cells
           </div>
         </div>
 
         <div className="glass-panel" style={{ padding: '1.25rem' }}>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+          <div style={{ fontSize: '0.74rem', color: 'var(--ks-text-muted)', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
             MISSING VALUES
           </div>
           <div style={{ 
             fontSize: '1.75rem', 
             fontWeight: 800, 
-            color: (quality.missing_cells || 0) > 0 ? 'var(--amber-warn)' : 'var(--emerald-pulse)', 
+            color: (quality.missing_cells || 0) > 0 ? 'var(--ks-vermilion)' : 'var(--ks-patina)', 
             fontFamily: 'var(--font-display)', 
             marginTop: '0.25rem' 
           }}>
             {quality.missing_cells ?? 0}
           </div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+          <div style={{ fontSize: '0.75rem', color: 'var(--ks-text-muted)' }}>
             {quality.missing_percentage ? `${quality.missing_percentage.toFixed(1)}% of matrix` : '0% missing'}
           </div>
         </div>
 
         <div className="glass-panel" style={{ padding: '1.25rem' }}>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+          <div style={{ fontSize: '0.74rem', color: 'var(--ks-text-muted)', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
             DUPLICATE ROWS
           </div>
           <div style={{ 
             fontSize: '1.75rem', 
             fontWeight: 800, 
-            color: (quality.duplicate_rows || 0) > 0 ? 'var(--rose-alert)' : 'var(--emerald-pulse)', 
+            color: (quality.duplicate_rows || 0) > 0 ? 'var(--ks-vermilion)' : 'var(--ks-patina)', 
             fontFamily: 'var(--font-display)', 
             marginTop: '0.25rem' 
           }}>
             {quality.duplicate_rows ?? 0}
           </div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+          <div style={{ fontSize: '0.75rem', color: 'var(--ks-text-muted)' }}>
             Exact row duplications detected
           </div>
         </div>
 
         <div className="glass-panel" style={{ padding: '1.25rem' }}>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+          <div style={{ fontSize: '0.74rem', color: 'var(--ks-text-muted)', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
             MEMORY USAGE
           </div>
-          <div style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--purple-telemetry)', fontFamily: 'var(--font-display)', marginTop: '0.25rem' }}>
+          <div style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--ks-ink)', fontFamily: 'var(--font-display)', marginTop: '0.25rem' }}>
             {quality.memory_usage_bytes ? `${(quality.memory_usage_bytes / 1024).toFixed(1)} KB` : 'N/A'}
           </div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+          <div style={{ fontSize: '0.75rem', color: 'var(--ks-text-muted)' }}>
             In-memory DataFrame allocation
           </div>
         </div>
@@ -198,15 +198,15 @@ export default function DataLabTab({ activeDataset }) {
       <div className="glass-panel" style={{ padding: '1.5rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-            <TableProperties size={20} color="var(--cyan-neon)" />
-            <h3>Inferred Schema & Feature Types</h3>
+            <TableProperties size={20} color="var(--ks-kinpaku)" />
+            <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--ks-ink)' }}>Inferred Schema & Feature Types</h3>
           </div>
-          <span className="badge badge-cyan">
+          <span className="badge badge-gold">
             {columns.length} Features
           </span>
         </div>
 
-        <div className="data-table-wrapper">
+        <div className="data-table-container">
           <table className="data-table">
             <thead>
               <tr>
@@ -227,24 +227,24 @@ export default function DataLabTab({ activeDataset }) {
 
                 return (
                   <tr key={colName}>
-                    <td style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{colName}</td>
+                    <td style={{ fontWeight: 700, color: 'var(--ks-ink)' }}>{colName}</td>
                     <td>
-                      <span className="badge badge-muted" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+                      <span className="badge badge-muted" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
                         {getTypeIcon(logicalType)}
                         <span>{logicalType.toUpperCase()}</span>
                       </span>
                     </td>
                     <td>
-                      <code style={{ color: 'var(--cyan-neon)', fontSize: '0.75rem' }}>{physicalDtype}</code>
+                      <code style={{ color: 'var(--ks-kinpaku-rich)', fontSize: '0.76rem', fontFamily: 'var(--font-mono)' }}>{physicalDtype}</code>
                     </td>
                     <td>
                       {nullCount > 0 ? (
-                        <span style={{ color: 'var(--amber-warn)' }}>{nullCount} nulls</span>
+                        <span style={{ color: 'var(--ks-vermilion)', fontWeight: 600 }}>{nullCount} nulls</span>
                       ) : (
-                        <span style={{ color: 'var(--emerald-pulse)' }}>0</span>
+                        <span style={{ color: 'var(--ks-patina-deep)', fontWeight: 600 }}>0</span>
                       )}
                     </td>
-                    <td style={{ color: 'var(--text-secondary)', maxWidth: 260, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    <td style={{ color: 'var(--ks-text-muted)', maxWidth: 260, overflow: 'hidden', textOverflow: 'ellipsis' }}>
                       {firstRowVal}
                     </td>
                   </tr>
@@ -259,14 +259,14 @@ export default function DataLabTab({ activeDataset }) {
       <div className="glass-panel" style={{ padding: '1.5rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', marginBottom: '1rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-            <FileSpreadsheet size={20} color="var(--orange-racing)" />
-            <h3>Inspected Records Preview</h3>
+            <FileSpreadsheet size={20} color="var(--ks-kinpaku)" />
+            <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--ks-ink)' }}>Inspected Records Preview</h3>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             {/* Search */}
             <div style={{ position: 'relative', width: 220 }}>
-              <Search size={14} style={{ position: 'absolute', left: 10, top: 11, color: 'var(--text-muted)' }} />
+              <Search size={14} style={{ position: 'absolute', left: 10, top: 11, color: 'var(--ks-text-faint)' }} />
               <input
                 type="text"
                 placeholder="Search values..."
@@ -298,11 +298,11 @@ export default function DataLabTab({ activeDataset }) {
           </div>
         </div>
 
-        <div className="data-table-wrapper">
+        <div className="data-table-container">
           <table className="data-table">
             <thead>
               <tr>
-                <th style={{ width: 40 }}>#</th>
+                <th style={{ width: 45 }}>#</th>
                 {columns.map((c) => (
                   <th key={c}>{c}</th>
                 ))}
@@ -311,18 +311,18 @@ export default function DataLabTab({ activeDataset }) {
             <tbody>
               {paginatedRows.length === 0 ? (
                 <tr>
-                  <td colSpan={columns.length + 1} style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>
+                  <td colSpan={columns.length + 1} style={{ textAlign: 'center', padding: '2rem', color: 'var(--ks-text-muted)' }}>
                     No matching records found.
                   </td>
                 </tr>
               ) : (
                 paginatedRows.map((r, idx) => (
                   <tr key={idx}>
-                    <td style={{ color: 'var(--text-muted)' }}>{page * pageSize + idx + 1}</td>
+                    <td style={{ color: 'var(--ks-text-faint)', fontFamily: 'var(--font-mono)', fontSize: '0.74rem' }}>{page * pageSize + idx + 1}</td>
                     {columns.map((c) => (
                       <td key={c}>
                         {r[c] === null || r[c] === undefined ? (
-                          <span style={{ color: 'var(--amber-warn)', fontStyle: 'italic' }}>null</span>
+                          <span style={{ color: 'var(--ks-vermilion)', fontStyle: 'italic' }}>null</span>
                         ) : (
                           String(r[c])
                         )}
@@ -336,7 +336,7 @@ export default function DataLabTab({ activeDataset }) {
         </div>
 
         {/* Pagination Bar */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '1rem', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '1rem', fontSize: '0.8rem', color: 'var(--ks-text-muted)' }}>
           <div>
             Showing {filteredRows.length > 0 ? page * pageSize + 1 : 0} to {Math.min((page + 1) * pageSize, filteredRows.length)} of {filteredRows.length} rows
           </div>
@@ -349,7 +349,7 @@ export default function DataLabTab({ activeDataset }) {
             >
               Previous
             </button>
-            <span style={{ display: 'flex', alignItems: 'center', padding: '0 0.5rem', fontFamily: 'var(--font-mono)' }}>
+            <span style={{ display: 'flex', alignItems: 'center', padding: '0 0.5rem', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
               {page + 1} / {totalPages}
             </span>
             <button

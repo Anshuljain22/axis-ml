@@ -66,27 +66,28 @@ export default function HomeDashboard({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', padding: '1.75rem' }}>
-      {/* 1. Minimalist Obsidian Hero Banner */}
+      {/* 1. Impeccable Kinpaku Light Hero Banner */}
       <div style={{
         borderRadius: '12px',
         border: '1px solid var(--border-subtle)',
-        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%), var(--bg-surface)',
-        padding: '2rem 2.25rem',
+        background: 'linear-gradient(135deg, var(--ks-paper-raised) 0%, var(--ks-paper-deep) 100%)',
+        padding: '2.25rem 2.5rem',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         position: 'relative',
         overflow: 'hidden',
+        boxShadow: 'var(--ks-lift-1)',
       }}>
         {/* Subtle background gradient radial */}
         <div style={{
           position: 'absolute',
-          right: -100,
-          top: -100,
-          width: 320,
-          height: 320,
+          right: -80,
+          top: -80,
+          width: 300,
+          height: 300,
           borderRadius: '50%',
-          background: 'rgba(255, 255, 255, 0.03)',
+          background: 'rgba(197, 139, 36, 0.06)',
           filter: 'blur(70px)',
           pointerEvents: 'none',
         }} />
@@ -96,49 +97,50 @@ export default function HomeDashboard({
             display: 'inline-flex',
             alignItems: 'center',
             gap: '0.45rem',
-            padding: '0.2rem 0.55rem',
+            padding: '0.22rem 0.6rem',
             borderRadius: '4px',
-            background: 'rgba(255, 255, 255, 0.06)',
+            background: 'var(--ks-paper-deep)',
             border: '1px solid var(--border-subtle)',
-            fontSize: '0.68rem',
+            fontSize: '0.7rem',
             fontFamily: 'var(--font-mono)',
-            color: '#f8fafc',
-            marginBottom: '0.75rem',
+            color: 'var(--ks-ink)',
+            marginBottom: '0.85rem',
             textTransform: 'uppercase',
             letterSpacing: '0.08em',
+            fontWeight: 600,
           }}>
-            <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--mint-sage)' }} />
+            <span className="pulse-dot pulse-dot-patina" style={{ width: 6, height: 6 }} />
             <span>Platform Online • Production Workspace</span>
           </div>
 
           <h1 style={{
-            fontSize: '1.85rem',
+            fontSize: '1.95rem',
             fontWeight: 800,
             letterSpacing: '-0.03em',
-            color: '#f8fafc',
-            marginBottom: '0.45rem',
+            color: 'var(--ks-ink)',
+            marginBottom: '0.5rem',
             fontFamily: 'var(--font-display)',
           }}>
             Neural Data Science & Machine Learning Intelligence
           </h1>
           <p style={{
-            fontSize: '0.86rem',
-            color: 'var(--text-secondary)',
+            fontSize: '0.88rem',
+            color: 'var(--ks-text-muted)',
             maxWidth: '680px',
-            lineHeight: 1.5,
+            lineHeight: 1.55,
           }}>
             Explore telemetry diagnostics, configure automated pipelines without data leakage, compare model benchmarks in MLflow, and evaluate predictions in real-time.
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '1rem', flexShrink: 0 }}>
+        <div style={{ display: 'flex', gap: '0.85rem', flexShrink: 0 }}>
           <button
             onClick={() => onNavigateTab('models')}
             className="btn btn-primary"
             style={{
-              padding: '0.7rem 1.25rem',
+              padding: '0.75rem 1.35rem',
               borderRadius: '8px',
-              fontSize: '0.84rem',
+              fontSize: '0.86rem',
               display: 'flex',
               alignItems: 'center',
               gap: '0.5rem',
@@ -151,9 +153,9 @@ export default function HomeDashboard({
             onClick={() => onNavigateTab('eda')}
             className="btn btn-secondary"
             style={{
-              padding: '0.7rem 1.25rem',
+              padding: '0.75rem 1.35rem',
               borderRadius: '8px',
-              fontSize: '0.84rem',
+              fontSize: '0.86rem',
             }}
           >
             <span>Inspect EDA Diagnostics</span>
@@ -161,7 +163,7 @@ export default function HomeDashboard({
         </div>
       </div>
 
-      {/* 2. Four Minimalist Quick Action Cards */}
+      {/* 2. Four Quick Action Studio Cards */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
@@ -174,63 +176,57 @@ export default function HomeDashboard({
               key={card.id}
               onClick={() => onNavigateTab(card.tab)}
               style={{
-                background: 'var(--bg-surface)',
+                background: 'var(--ks-paper-raised)',
                 border: '1px solid var(--border-subtle)',
                 borderRadius: '10px',
-                padding: '1.2rem',
+                padding: '1.25rem',
                 cursor: 'pointer',
                 transition: 'all var(--transition-normal)',
                 position: 'relative',
+                boxShadow: 'var(--ks-lift-1)',
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)';
+                e.currentTarget.style.borderColor = 'var(--ks-kinpaku)';
+                e.currentTarget.style.boxShadow = 'var(--ks-lift-2)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'none';
                 e.currentTarget.style.borderColor = 'var(--border-subtle)';
-                e.currentTarget.style.background = 'var(--bg-surface)';
+                e.currentTarget.style.boxShadow = 'var(--ks-lift-1)';
               }}
             >
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '0.85rem' }}>
                 <div style={{
-                  width: 36,
-                  height: 36,
+                  width: 38,
+                  height: 38,
                   borderRadius: '8px',
-                  background: 'rgba(255, 255, 255, 0.05)',
+                  background: 'var(--ks-paper-deep)',
                   border: '1px solid var(--border-subtle)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#f8fafc',
+                  color: 'var(--ks-kinpaku-rich)',
                 }}>
                   <Icon size={18} />
                 </div>
-                <span style={{
-                  fontSize: '0.65rem',
-                  fontFamily: 'var(--font-mono)',
-                  color: 'var(--text-muted)',
-                  border: '1px solid var(--border-subtle)',
-                  padding: '0.15rem 0.45rem',
-                  borderRadius: '4px',
-                }}>
+                <span className="badge badge-muted" style={{ fontSize: '0.65rem' }}>
                   {card.badge}
                 </span>
               </div>
 
               <div style={{
-                fontSize: '0.94rem',
+                fontSize: '0.96rem',
                 fontWeight: 700,
-                color: '#f8fafc',
+                color: 'var(--ks-ink)',
                 marginBottom: '0.25rem',
               }}>
                 {card.title}
               </div>
               <div style={{
-                fontSize: '0.76rem',
-                color: 'var(--text-muted)',
-                lineHeight: 1.4,
+                fontSize: '0.78rem',
+                color: 'var(--ks-text-muted)',
+                lineHeight: 1.45,
               }}>
                 {card.desc}
               </div>
@@ -243,16 +239,17 @@ export default function HomeDashboard({
       <div style={{
         display: 'grid',
         gridTemplateColumns: '1fr 1.25fr 1fr',
-        gap: '1rem',
+        gap: '1.25rem',
       }}>
         {/* Col 1: Active Datasets */}
         <div style={{
-          background: 'var(--bg-surface)',
+          background: 'var(--ks-paper-raised)',
           border: '1px solid var(--border-subtle)',
           borderRadius: '10px',
-          padding: '1.25rem',
+          padding: '1.35rem',
           display: 'flex',
           flexDirection: 'column',
+          boxShadow: 'var(--ks-lift-1)',
         }}>
           <div style={{
             display: 'flex',
@@ -261,8 +258,8 @@ export default function HomeDashboard({
             marginBottom: '1rem',
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Database size={16} color="#94a3b8" />
-              <span style={{ fontSize: '0.88rem', fontWeight: 700, color: '#f8fafc' }}>
+              <Database size={16} color="var(--ks-kinpaku)" />
+              <span style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--ks-ink)' }}>
                 Active Datasets
               </span>
             </div>
@@ -271,19 +268,20 @@ export default function HomeDashboard({
               style={{
                 background: 'transparent',
                 border: 'none',
-                color: 'var(--text-muted)',
+                color: 'var(--ks-kinpaku-rich)',
                 fontSize: '0.74rem',
                 fontFamily: 'var(--font-mono)',
                 cursor: 'pointer',
+                fontWeight: 600,
               }}
-              onMouseEnter={(e) => { e.currentTarget.style.color = '#f8fafc'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--ks-ink)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--ks-kinpaku-rich)'; }}
             >
               Catalog →
             </button>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem', flex: 1 }}>
             {datasets.map((d) => (
               <div
                 key={d.id}
@@ -295,39 +293,32 @@ export default function HomeDashboard({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  padding: '0.7rem 0.85rem',
+                  padding: '0.75rem 0.85rem',
                   borderRadius: '6px',
-                  background: activeDataset?.id === d.id ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0.015)',
-                  border: `1px solid ${activeDataset?.id === d.id ? 'rgba(255, 255, 255, 0.2)' : 'var(--border-subtle)'}`,
+                  background: activeDataset?.id === d.id ? 'var(--ks-kinpaku-pale)' : 'var(--ks-paper-deep)',
+                  border: `1px solid ${activeDataset?.id === d.id ? 'var(--ks-kinpaku-border)' : 'var(--border-subtle)'}`,
                   cursor: 'pointer',
                   transition: 'all var(--transition-fast)',
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)'; }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--ks-kinpaku)'; }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.borderColor = activeDataset?.id === d.id
-                    ? 'rgba(255, 255, 255, 0.2)'
+                    ? 'var(--ks-kinpaku-border)'
                     : 'var(--border-subtle)';
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-                  <FileSpreadsheet size={16} color="var(--text-muted)" />
+                  <FileSpreadsheet size={16} color="var(--ks-text-muted)" />
                   <div>
-                    <div style={{ fontSize: '0.82rem', fontWeight: 600, color: '#f8fafc' }}>
+                    <div style={{ fontSize: '0.84rem', fontWeight: 700, color: 'var(--ks-ink)' }}>
                       {d.name}
                     </div>
-                    <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+                    <div style={{ fontSize: '0.7rem', color: 'var(--ks-text-muted)', fontFamily: 'var(--font-mono)' }}>
                       {d.row_count || 150} observations • {d.column_count || 9} dimensions
                     </div>
                   </div>
                 </div>
-                <div style={{
-                  fontSize: '0.66rem',
-                  fontFamily: 'var(--font-mono)',
-                  color: 'var(--mint-sage)',
-                  padding: '0.15rem 0.4rem',
-                  borderRadius: '4px',
-                  background: 'rgba(16, 185, 129, 0.1)',
-                }}>
+                <div className="badge badge-patina" style={{ fontSize: '0.66rem', padding: '0.15rem 0.4rem' }}>
                   Validated
                 </div>
               </div>
@@ -337,12 +328,13 @@ export default function HomeDashboard({
 
         {/* Col 2: Model Performance & Convergence Graph */}
         <div style={{
-          background: 'var(--bg-surface)',
+          background: 'var(--ks-paper-raised)',
           border: '1px solid var(--border-subtle)',
           borderRadius: '10px',
-          padding: '1.25rem',
+          padding: '1.35rem',
           display: 'flex',
           flexDirection: 'column',
+          boxShadow: 'var(--ks-lift-1)',
         }}>
           <div style={{
             display: 'flex',
@@ -351,8 +343,8 @@ export default function HomeDashboard({
             marginBottom: '0.85rem',
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <TrendingUp size={16} color="#94a3b8" />
-              <span style={{ fontSize: '0.88rem', fontWeight: 700, color: '#f8fafc' }}>
+              <TrendingUp size={16} color="var(--ks-kinpaku)" />
+              <span style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--ks-ink)' }}>
                 Benchmark Metrics & Convergence
               </span>
             </div>
@@ -361,13 +353,14 @@ export default function HomeDashboard({
               style={{
                 background: 'transparent',
                 border: 'none',
-                color: 'var(--text-muted)',
+                color: 'var(--ks-kinpaku-rich)',
                 fontSize: '0.74rem',
                 fontFamily: 'var(--font-mono)',
                 cursor: 'pointer',
+                fontWeight: 600,
               }}
-              onMouseEnter={(e) => { e.currentTarget.style.color = '#f8fafc'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--ks-ink)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--ks-kinpaku-rich)'; }}
             >
               Leaderboard →
             </button>
@@ -376,78 +369,80 @@ export default function HomeDashboard({
           {/* Metric Tiles */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', marginBottom: '0.85rem' }}>
             <div style={{
-              background: 'rgba(255, 255, 255, 0.03)',
+              background: 'var(--ks-paper-deep)',
               border: '1px solid var(--border-subtle)',
               borderRadius: '6px',
               padding: '0.5rem',
               textAlign: 'center',
             }}>
-              <div style={{ fontSize: '1rem', fontWeight: 800, color: '#f8fafc', fontFamily: 'var(--font-mono)' }}>
+              <div style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--ks-ink)', fontFamily: 'var(--font-mono)' }}>
                 0.941
               </div>
-              <div style={{ fontSize: '0.64rem', color: 'var(--text-muted)' }}>ROC-AUC</div>
+              <div style={{ fontSize: '0.64rem', color: 'var(--ks-text-muted)' }}>ROC-AUC</div>
             </div>
             <div style={{
-              background: 'rgba(255, 255, 255, 0.03)',
-              border: '1px solid var(--border-subtle)',
+              background: 'var(--ks-kinpaku-pale)',
+              border: '1px solid var(--ks-kinpaku-border)',
               borderRadius: '6px',
               padding: '0.5rem',
               textAlign: 'center',
             }}>
-              <div style={{ fontSize: '1rem', fontWeight: 800, color: '#f8fafc', fontFamily: 'var(--font-mono)' }}>
+              <div style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--ks-kinpaku-deep)', fontFamily: 'var(--font-mono)' }}>
                 96.4%
               </div>
-              <div style={{ fontSize: '0.64rem', color: 'var(--text-muted)' }}>Accuracy</div>
+              <div style={{ fontSize: '0.64rem', color: 'var(--ks-kinpaku-deep)' }}>Accuracy</div>
             </div>
             <div style={{
-              background: 'rgba(255, 255, 255, 0.03)',
+              background: 'var(--ks-paper-deep)',
               border: '1px solid var(--border-subtle)',
               borderRadius: '6px',
               padding: '0.5rem',
               textAlign: 'center',
             }}>
-              <div style={{ fontSize: '1rem', fontWeight: 800, color: '#f8fafc', fontFamily: 'var(--font-mono)' }}>
+              <div style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--ks-ink)', fontFamily: 'var(--font-mono)' }}>
                 0.042
               </div>
-              <div style={{ fontSize: '0.64rem', color: 'var(--text-muted)' }}>MAE</div>
+              <div style={{ fontSize: '0.64rem', color: 'var(--ks-text-muted)' }}>MAE</div>
             </div>
             <div style={{
-              background: 'rgba(255, 255, 255, 0.03)',
-              border: '1px solid var(--border-subtle)',
+              background: 'var(--ks-patina-pale)',
+              border: '1px solid var(--ks-patina-border)',
               borderRadius: '6px',
               padding: '0.5rem',
               textAlign: 'center',
             }}>
-              <div style={{ fontSize: '1rem', fontWeight: 800, color: '#f8fafc', fontFamily: 'var(--font-mono)' }}>
+              <div style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--ks-patina-deep)', fontFamily: 'var(--font-mono)' }}>
                 1.14ms
               </div>
-              <div style={{ fontSize: '0.64rem', color: 'var(--text-muted)' }}>Latency</div>
+              <div style={{ fontSize: '0.64rem', color: 'var(--ks-patina-deep)' }}>Latency</div>
             </div>
           </div>
 
           {/* SVG Convergence Curve */}
-          <div style={{ flex: 1, minHeight: '110px', position: 'relative' }}>
+          <div style={{ flex: 1, minHeight: '110px', position: 'relative', background: 'var(--ks-paper-deep)', borderRadius: '8px', padding: '0.5rem', border: '1px solid var(--border-subtle)' }}>
             <svg viewBox="0 0 400 110" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
-              <line x1="10" y1="20" x2="390" y2="20" stroke="rgba(255,255,255,0.04)" strokeDasharray="3 3" />
-              <line x1="10" y1="55" x2="390" y2="55" stroke="rgba(255,255,255,0.04)" strokeDasharray="3 3" />
-              <line x1="10" y1="90" x2="390" y2="90" stroke="rgba(255,255,255,0.04)" strokeDasharray="3 3" />
+              <line x1="10" y1="20" x2="390" y2="20" stroke="rgba(25,24,23,0.06)" strokeDasharray="3 3" />
+              <line x1="10" y1="55" x2="390" y2="55" stroke="rgba(25,24,23,0.06)" strokeDasharray="3 3" />
+              <line x1="10" y1="90" x2="390" y2="90" stroke="rgba(25,24,23,0.06)" strokeDasharray="3 3" />
 
               <path
                 d="M 10 95 Q 80 75, 140 45 T 260 25 T 390 14"
                 fill="none"
-                stroke="#f8fafc"
-                strokeWidth="2"
+                stroke="var(--ks-kinpaku)"
+                strokeWidth="2.5"
+                strokeLinecap="round"
               />
               <path
                 d="M 10 98 Q 80 82, 140 55 T 260 35 T 390 24"
                 fill="none"
-                stroke="#64748b"
-                strokeWidth="1.5"
+                stroke="var(--ks-patina)"
+                strokeWidth="1.8"
                 strokeDasharray="4 2"
+                strokeLinecap="round"
               />
 
-              <circle cx="390" cy="14" r="3.5" fill="#f8fafc" />
-              <circle cx="390" cy="24" r="3" fill="#64748b" />
+              <circle cx="390" cy="14" r="4" fill="var(--ks-kinpaku)" stroke="var(--ks-paper-raised)" strokeWidth="1.5" />
+              <circle cx="390" cy="24" r="3.5" fill="var(--ks-patina)" />
             </svg>
 
             <div style={{
@@ -459,11 +454,11 @@ export default function HomeDashboard({
               fontFamily: 'var(--font-mono)',
               marginTop: '4px',
             }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#f8fafc' }}>
-                <span style={{ width: 8, height: 2, background: '#f8fafc' }} /> Train Loss
+              <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--ks-kinpaku-deep)', fontWeight: 600 }}>
+                <span style={{ width: 8, height: 2, background: 'var(--ks-kinpaku)' }} /> Train Loss
               </span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#64748b' }}>
-                <span style={{ width: 8, height: 2, background: '#64748b', borderTop: '1px dashed' }} /> Validation
+              <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--ks-patina-deep)', fontWeight: 600 }}>
+                <span style={{ width: 8, height: 2, background: 'var(--ks-patina)', borderTop: '1px dashed' }} /> Validation
               </span>
             </div>
           </div>
@@ -471,12 +466,13 @@ export default function HomeDashboard({
 
         {/* Col 3: Model Zoo Registry */}
         <div style={{
-          background: 'var(--bg-surface)',
+          background: 'var(--ks-paper-raised)',
           border: '1px solid var(--border-subtle)',
           borderRadius: '10px',
-          padding: '1.25rem',
+          padding: '1.35rem',
           display: 'flex',
           flexDirection: 'column',
+          boxShadow: 'var(--ks-lift-1)',
         }}>
           <div style={{
             display: 'flex',
@@ -485,8 +481,8 @@ export default function HomeDashboard({
             marginBottom: '1rem',
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <FlaskConical size={16} color="#94a3b8" />
-              <span style={{ fontSize: '0.88rem', fontWeight: 700, color: '#f8fafc' }}>
+              <FlaskConical size={16} color="var(--ks-kinpaku)" />
+              <span style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--ks-ink)' }}>
                 Model Zoo Registry
               </span>
             </div>
@@ -495,13 +491,14 @@ export default function HomeDashboard({
               style={{
                 background: 'transparent',
                 border: 'none',
-                color: 'var(--text-muted)',
+                color: 'var(--ks-kinpaku-rich)',
                 fontSize: '0.74rem',
                 fontFamily: 'var(--font-mono)',
                 cursor: 'pointer',
+                fontWeight: 600,
               }}
-              onMouseEnter={(e) => { e.currentTarget.style.color = '#f8fafc'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--ks-ink)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--ks-kinpaku-rich)'; }}
             >
               Runs →
             </button>
@@ -515,25 +512,25 @@ export default function HomeDashboard({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  padding: '0.55rem 0.75rem',
+                  padding: '0.6rem 0.75rem',
                   borderRadius: '6px',
-                  background: 'rgba(255, 255, 255, 0.02)',
+                  background: 'var(--ks-paper-deep)',
                   border: '1px solid var(--border-subtle)',
                 }}
               >
                 <div>
-                  <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#f8fafc' }}>
+                  <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--ks-ink)' }}>
                     {exp.name}
                   </div>
-                  <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+                  <div style={{ fontSize: '0.68rem', color: 'var(--ks-text-muted)', fontFamily: 'var(--font-mono)' }}>
                     {exp.model}
                   </div>
                 </div>
                 <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontSize: '0.72rem', fontFamily: 'var(--font-mono)', color: '#f8fafc', fontWeight: 600 }}>
+                  <div style={{ fontSize: '0.72rem', fontFamily: 'var(--font-mono)', color: 'var(--ks-ink)', fontWeight: 700 }}>
                     {exp.score}
                   </div>
-                  <div style={{ fontSize: '0.62rem', color: 'var(--mint-sage)', fontFamily: 'var(--font-mono)' }}>
+                  <div style={{ fontSize: '0.62rem', color: 'var(--ks-patina-deep)', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
                     {exp.status}
                   </div>
                 </div>
